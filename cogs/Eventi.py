@@ -1,6 +1,7 @@
 import discord
 from discord.ext import commands
 from discord.utils import get
+from time import sleep
 
 class Eventi(commands.Cog):
     def __init__(self, bot):
