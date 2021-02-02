@@ -133,7 +133,6 @@ async def on_command_error(ctx, error):
     if isinstance(error, commands.MissingRequiredArgument):
         await ctx.send(f'Manca qualche argomento per usare questo comando...')
 
-
 #####################
 #    run the bot    #
 #####################
