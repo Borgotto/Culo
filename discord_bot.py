@@ -3,8 +3,6 @@ from discord.ext import commands
 import os
 import json
 
-#ho aggiunto una nuova funzionalità
-
 ###################
 #    bot setup    #
 ###################
