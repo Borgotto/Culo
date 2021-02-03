@@ -37,5 +37,8 @@ class Eventi(commands.Cog):
         if message.content.lower() == 'amedeo bellissimo':
             await message.channel.send('https://imgur.com/oFAW5Uq')
 
+        if message.content.lower() == 'pablo comunista':
+            await message.channel.send('https://imgur.com/mD77kay')
+
 def setup(bot):
     bot.add_cog(Eventi(bot))
