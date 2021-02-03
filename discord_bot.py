@@ -39,6 +39,16 @@ def update_prefixes():
     with open('prefixes.json', 'w') as file: 
         json.dump(updated_prefixes, file, indent=4)
 
+#create the prefixes.json file if it doesn't exist
+try:
+    file = open('prefixes.json', 'r'); file.close()
+except IOError:
+    file = open('prefixes.json', 'w'); file.close()
+
+#makes sure the different prefixes are up to date with the bot's actual servers
+update_prefixes()
+
+#instantiate the bot with the right prefix
 bot = commands.Bot(command_prefix = (get_prefix))
 
 
@@ -51,9 +61,6 @@ bot = commands.Bot(command_prefix = (get_prefix))
 async def on_ready():
     #updates to bot presence
     await bot.change_presence(status = discord.Status.online, activity = (discord.Activity(name= f"alle bestemmie di {len(bot.guilds)} server...", type=discord.ActivityType.listening)))
-    
-    #makes sure the different prefixes are up to date with the bot's actual servers
-    update_prefixes()  
     
     #print a bunch of info about the bot
     print ("\n--------------------------------\n")
