@@ -121,7 +121,7 @@ async def cambia_prefisso(ctx, prefix : str):
     with open('prefixes.json', 'w') as file: 
         json.dump(prefixes, file, indent=4)
 
-    await ctx.send(f'Prefix changed to: {prefix}') 
+    await ctx.send(f'Prefisso cambiato a: {prefix}') 
 
 
 
