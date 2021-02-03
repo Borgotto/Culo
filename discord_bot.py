@@ -32,16 +32,23 @@ bot = commands.Bot(command_prefix = (get_prefix))
 ##################
 @bot.event
 async def on_ready():
-    print ("\n--------------------------------")
+    print ("\n--------------------------------\n")
     print ("Bot Name:", bot.user.name)
     print ("Bot ID:", bot.user.id)
     #print ("Bot token:", token)
     #print ("Bot prefix:", bot.command_prefix)
     print ("Discord Version:", discord.__version__)
-    print ("--------------------------------")
+    print ("\n--------------------------------\n")
 
     #updates to bot presence
     await bot.change_presence(status = discord.Status.online, activity = (discord.Activity(name= f"alle bestemmie di {len(bot.guilds)} server...", type=discord.ActivityType.listening)))
+
+    #print all server names the bot is in and an invite to that server
+    print("List of all servers the bot is in:\n")
+    for guild in bot.guilds:
+        print("Server name:", guild.name)
+        print("Server ID:", guild.id, end="\n\n")
+    print ("--------------------------------\n")
 
 #########################
 #    prefix handling    #
