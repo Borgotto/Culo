@@ -21,7 +21,7 @@ class Eventi(commands.Cog):
         if message.content.lower() == 'luca gay':
             await message.channel.send('si, luca è gay')
 
-        if message.content.lower() == 'pablo gay' or message.content == 'borgo gay':
+        if message.content.lower() == 'pablo gay' or message.content.lower() == 'borgo gay':
             await message.channel.send('no luca gay')
 
         if message.content.lower() == 'bravo bot' or message.content.lower() == 'bel bot':
@@ -29,6 +29,13 @@ class Eventi(commands.Cog):
 
         if message.content.lower() == 'prefisso?':
             await message.channel.send(self.bot.command_prefix(self, message))
+
+        if message.content.lower() == 'punta il ferro':
+            await message.channel.send('luca ti punta il ferro, cosa fai?')
+            await message.channel.send('https://imgur.com/BZDUDxp')
+
+        if message.content.lower() == 'amedeo bellissimo':
+            await message.channel.send('https://imgur.com/oFAW5Uq')
 
 def setup(bot):
     bot.add_cog(Eventi(bot))
