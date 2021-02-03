@@ -41,6 +41,9 @@ def update_prefixes():
 
 bot = commands.Bot(command_prefix = (get_prefix))
 
+
+
+
 ##################
 #    on ready    #
 ##################
@@ -67,6 +70,9 @@ async def on_ready():
             print("Server name:", guild.name)
             print("Server prefix:", prefixes[str(guild.id)], end="\n\n")
     print ("--------------------------------\n")
+
+
+
 
 #########################
 #    prefix handling    #
@@ -110,6 +116,9 @@ async def cambia_prefisso(ctx, prefix : str):
 
     await ctx.send(f'Prefix changed to: {prefix}') 
 
+
+
+
 #######################
 #    cogs handling    #
 #######################
@@ -144,6 +153,9 @@ for filename in os.listdir('./cogs'):
     if (filename.endswith('.py')):
         bot.load_extension(f'cogs.{filename[:-3]}')
 
+
+
+
 ################################
 #    command error handling    #
 ################################
@@ -157,6 +169,10 @@ async def on_command_error(ctx, error):
 
     if isinstance(error, commands.MissingRequiredArgument):
         await ctx.send(f'Manca qualche argomento per usare questo comando...')
+
+
+
+
 
 #####################
 #    run the bot    #
