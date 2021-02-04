@@ -11,10 +11,6 @@ class Comandi(commands.Cog):
     async def on_ready(self):
         print("Comandi caricati!")
 
-    @commands.command(name="ping")
-    async def ping(self, ctx):
-        await ctx.send(f"🏓 Pong with {str(round(self.bot.latency, 2) * 1000)}ms")
-
     @commands.command(name="chisono")
     async def chisono(self, ctx):
         await ctx.send(f"Sei un trimone {ctx.message.author.name}")

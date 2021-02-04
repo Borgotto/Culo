@@ -130,20 +130,16 @@ async def cambia_prefisso(ctx, prefix : str):
 #    cogs handling    #
 #######################
 @bot.command()
+@commands.has_permissions(administrator=True)
 async def attiva(ctx, plugin : str):
-    if (ctx.author.id == 289887222310764545):
-        bot.load_extension(f'cogs.{plugin.title()}')
-        await ctx.send(f'Ho attivato: {plugin.title()}')
-    else:
-        await ctx.send(f'Solo il mio creatore <@289887222310764545> può attivare o disattivare i moduli')
+    bot.load_extension(f'cogs.{plugin.title()}')
+    await ctx.send(f'Ho attivato: {plugin.title()}')
 
 @bot.command()
+@commands.has_permissions(administrator=True)
 async def disattiva(ctx, plugin : str):
-    if (ctx.author.id == 289887222310764545):
-        bot.unload_extension(f'cogs.{plugin.title()}')
-        await ctx.send(f'Ho disattivato: {plugin.title()}')
-    else:
-        await ctx.send(f'Solo il mio creatore <@289887222310764545> può attivare o disattivare i moduli')
+    bot.unload_extension(f'cogs.{plugin.title()}')
+    await ctx.send(f'Ho disattivato: {plugin.title()}')
 
 @bot.command()
 @commands.has_permissions(administrator=True)
@@ -152,7 +148,6 @@ async def ricarica(ctx):
         if (filename.endswith('.py')):            
             bot.unload_extension(f'cogs.{filename[:-3]}')
             bot.load_extension(f'cogs.{filename[:-3]}')
-
     await ctx.send(f'Cog ricaricati!')
 
 #carica tutti i cog all'avvio       
