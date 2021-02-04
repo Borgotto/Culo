@@ -22,7 +22,7 @@ class Eventi(commands.Cog):
             await message.channel.send('si, luca è gay')
 
         if message.content.lower() == 'pablo gay' or message.content.lower() == 'borgo gay':
-            await message.channel.send('no luca gay')
+            await message.channel.send('no tu sei gay')
 
         if message.content.lower() == 'bravo bot' or message.content.lower() == 'bel bot':
             await message.channel.send('UwU grazie')
