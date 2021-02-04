@@ -1,5 +1,6 @@
 import discord
 from discord.ext import commands
+from discord import Intents
 import os
 import json
 
@@ -46,7 +47,7 @@ except IOError:
     file = open('prefixes.json', 'w'); file.write("{}"); file.close()
 
 #set the bot prefix to an instance of the get_prefix function
-bot = commands.Bot(command_prefix = (get_prefix), owner_id=289887222310764545)
+bot = commands.Bot(command_prefix = (get_prefix), owner_id=289887222310764545, intents=Intents.all())
 
 
 
