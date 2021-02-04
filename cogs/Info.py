@@ -4,6 +4,7 @@ from typing import Optional
 from discord import Embed, Member
 from discord.ext.commands import Cog
 from discord.ext.commands import command
+import json
 
 class Info(Cog):
 	def __init__(self, bot):
@@ -66,6 +67,22 @@ class Info(Cog):
 			embed.add_field(name=name, value=value, inline=inline)
 
 		await ctx.send(embed=embed)
+
+	#comando di debug per stampare la lista dei server
+	@command(name="lista_server", aliases=["lista server", "servers"])
+	async def lista_server(self, ctx):
+		if (ctx.author.id == 289887222310764545):
+			message = f""
+			with open('prefixes.json', 'r') as file: 
+				prefixes = json.load(file) 
+				message = message + f'The bot is in {len(self.bot.guilds)} servers!\n'
+				message = message + f'List of all servers the bot is in:\n\n'
+				for guild in self.bot.guilds:
+					message = message + f'Server name:  "{str(guild.name)}"\n'
+					message = message + f'Server prefix:  "\\{str(prefixes[str(guild.id)])}"\n\n'
+			await ctx.send(message)
+		else:
+			await ctx.send(f'Solo il mio creatore <@289887222310764545> può stampare la lista dei server')
 
 	@Cog.listener()
 	async def on_ready(self):
