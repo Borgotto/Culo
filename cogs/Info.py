@@ -73,7 +73,7 @@ class Info(commands.Cog):
 	@commands.command(name="lista_server", aliases=["lista server", "servers"])
 	@commands.has_permissions(administrator=True)
 	async def lista_server(self, ctx):
-		if (ctx.author.id == 289887222310764545):
+		if (ctx.author.id == self.bot.owner_id):
 			message = f""
 			with open('prefixes.json', 'r') as file: 
 				prefixes = json.load(file) 
@@ -84,7 +84,7 @@ class Info(commands.Cog):
 					message = message + f'Server prefix:  "\\{str(prefixes[str(guild.id)])}"\n\n'
 			await ctx.send(message)
 		else:
-			await ctx.send(f'Solo il mio creatore <@289887222310764545> può stampare la lista dei server')
+			await ctx.send(f'Solo il mio creatore <@{self.bot.owner_id}> può stampare la lista dei server per ragioni di sicurezza')
 
 
 def setup(bot):
