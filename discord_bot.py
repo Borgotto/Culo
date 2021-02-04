@@ -110,7 +110,7 @@ async def on_guild_remove(guild):
     #updates to bot presence
     await bot.change_presence(status = discord.Status.online, activity = (discord.Activity(name= f"alle bestemmie di {len(bot.guilds)} server...", type=discord.ActivityType.listening)))
 
-@bot.command()
+@bot.command(name="cambia_prefisso", aliases=["prefisso"])
 @commands.has_permissions(administrator=True) 
 async def cambia_prefisso(ctx, prefix : str): 
     with open('prefixes.json', 'r') as file:

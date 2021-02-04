@@ -1,7 +1,4 @@
-import discord
 from discord.ext import commands
-from discord.utils import get
-from time import sleep
 
 class Eventi(commands.Cog):
     def __init__(self, bot):
@@ -39,6 +36,7 @@ class Eventi(commands.Cog):
 
         if message.content.lower() == 'pablo comunista':
             await message.channel.send('https://imgur.com/mD77kay')
+
 
 def setup(bot):
     bot.add_cog(Eventi(bot))

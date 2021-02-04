@@ -1,7 +1,5 @@
-import discord
 from discord.ext import commands
-from discord.utils import get
-from time import sleep
+from discord import Member
 
 class Comandi(commands.Cog):
     def __init__(self, bot):
@@ -20,7 +18,7 @@ class Comandi(commands.Cog):
         await ctx.send(f"Oh no mi sono cagato addosso")
 
     @commands.command(name="pinga", aliases=["pinga_utente"])
-    async def pinga(self, ctx, user : discord.Member, amount=1): 
+    async def pinga(self, ctx, user : Member, amount=1): 
         if (amount > 100):
                 await ctx.send("Oh ma sei impazzito? Non posso pingare tutte quelle volte")
         else:                
@@ -42,6 +40,7 @@ class Comandi(commands.Cog):
                 pass
             if (mode == "giorni" or mode == "d"):
                 pass
+
 
 def setup(bot):
     bot.add_cog(Comandi(bot))
