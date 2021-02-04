@@ -70,6 +70,7 @@ class Info(Cog):
 
 	#comando di debug per stampare la lista dei server
 	@command(name="lista_server", aliases=["lista server", "servers"])
+	@commands.has_permissions(administrator=True) 
 	async def lista_server(self, ctx):
 		if (ctx.author.id == 289887222310764545):
 			message = f""
