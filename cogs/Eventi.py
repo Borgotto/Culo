@@ -27,7 +27,7 @@ class Eventi(commands.Cog):
         if message.content.lower() == 'prefisso?':
             await message.channel.send(self.bot.command_prefix(self, message))
 
-        if message.content.lower() == 'punta il ferro':
+        if message.content.lower() == 'punta il ferro' or message.content.lower() == 'luca ti punta il ferro':
             await message.channel.send('luca ti punta il ferro, cosa fai?')
             await message.channel.send('https://imgur.com/BZDUDxp')
 
