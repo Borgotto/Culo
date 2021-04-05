@@ -13,7 +13,7 @@ class Loops(commands.Cog):
         print("Loop caricati!")
 
     #Loop per rinominare Fabio.exe ( id = 192261771380260864 )
-    @tasks.loop(seconds=300)
+    @tasks.loop(seconds=150)
     async def fabio(self):
         fabio = get(self.bot.get_all_members(), id=192261771380260864)
         detu = get(self.bot.get_all_members(), id=204181932148391937)
