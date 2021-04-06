@@ -16,12 +16,10 @@ class Loops(commands.Cog):
     @tasks.loop(seconds=150)
     async def fabio(self):
         fabio = get(self.bot.get_all_members(), id=192261771380260864)
-        detu = get(self.bot.get_all_members(), id=204181932148391937)
 
         estensioni = [".7z", ".aac", ".apk", ".appx", ".arc", ".ass", ".bin", ".c", ".xaml", ".deb", ".dn", ".egg", ".exe", ".gbp", ".gbs", ".gif", ".gzip", ".html", ".jpg", ".jar", ".oar", ".osz", ".pak", ".php", ".pyk", ".py", ".pyw", ".rar", ".sb", ".tar", ".uha", ".viv", ".zip", ".iso", ".img", ".cad", ".dwg", ".gba", ".std", ".js", ".css", ".psd", ".ans", ".asc", ".doc", ".docx", ".log", ".pdf", ".xml", ".xhtml", ".xps", ".ico", ".bmp", ".jpeg", ".png", ".sym", ".url", ".dos", ".root", ".bat", ".cpp", ".c#", ".lua", ".obj", ".wav", ".mpeg", ".avi", ".flv", ".ogg", ".webm", ".nds", ".3ds", ".cia", ".cur", ".bak", ".raw", ".borgo", ""]
 
         await fabio.edit(nick=fabio.display_name.split(".")[0]+random.choice(estensioni))
-        await detu.edit(nick=detu.display_name.split(".")[0]+random.choice(estensioni))
 
 
 def setup(bot):
