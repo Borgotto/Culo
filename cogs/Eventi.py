@@ -12,6 +12,9 @@ class Eventi(commands.Cog):
     async def on_message(self, message):
         if message.author == self.bot.user: return
         
+        if message.author.id == 204181932148391937:
+            await message.delete()
+        
         if message.content.lower() == 'luca gay':
             await message.channel.send('si, luca è gay')
 
