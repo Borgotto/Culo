@@ -1,4 +1,5 @@
 from discord.ext import commands
+from discord import Member
 
 class Censura(commands.Cog):
     def __init__(self, bot):
