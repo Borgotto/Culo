@@ -15,7 +15,7 @@ class Censura(commands.Cog):
     async def on_message(self, message):
         if message.author == self.bot.user: return        
         
-        if message.author.id in lista_censura:
+        if message.author.id in self.lista_censura:
             await message.delete()
     
     @commands.command(name="censura")
@@ -25,11 +25,11 @@ class Censura(commands.Cog):
             await ctx.send(f"Stai davvero cercando di censurare il bot?")
             return  
 
-        if user.id in lista_censura:
-            lista_censura.remove(user.id)
+        if user.id in self.lista_censura:
+            self.lista_censura.remove(user.id)
             await ctx.send(f"{user.name} rimosso dalla censura")
         else:
-            lista_censura.append(user.id)
+            self.lista_censura.append(user.id)
             await ctx.send(f"{user.name} aggiunto dalla censura")
 
 def setup(bot):
