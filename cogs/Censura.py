@@ -17,11 +17,16 @@ class Censura(commands.Cog):
         
         if message.author.id in self.lista_censura:
             await message.delete()
+
+    @commands.Cog.listener()
+    async def on_voice_state_update(self, member, before, after):
+        if member.id in self.lista_censura:
+            await member.move_to(None)
     
     @commands.command(name="censura")
     @commands.has_permissions(administrator=True)
     async def censura(self, ctx, user : Member):
-        if user.id == self.bot.user: 
+        if user.id == self.bot.user.id: 
             await ctx.send(f"Stai davvero cercando di censurare il bot?")
             return  
 
