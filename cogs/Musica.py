@@ -1,7 +1,7 @@
-import discord 
 import youtube_dl
 from discord.ext import commands
 from discord.utils import get
+from discord import Member, VoiceChannel
 
 class Music(commands.Cog):
     def __init__(self, bot):
@@ -14,7 +14,7 @@ class Music(commands.Cog):
         print("Musica caricata!")
 
     @commands.command(name="play")
-    async def play(self, ctx, canale:discord.VoiceChannel=None):
+    async def play(self, ctx, canale: VoiceChannel=None):
         if canale is None:
             canale = ctx.author.voice.channel
         voce = get(self.bot.voice_clients, guild=ctx.guild)
@@ -33,8 +33,6 @@ class Music(commands.Cog):
             await voce.disconnect()
         else:
             await ctx.send("Devi essere nello stesso canale vocale per disconnettermi")
-
-
 
 def setup(bot):
     bot.add_cog(Music(bot))
