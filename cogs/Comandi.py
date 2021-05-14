@@ -29,11 +29,10 @@ class Comandi(commands.Cog):
     @commands.has_permissions(administrator=True)
     async def raduna(self, ctx, canale : VoiceChannel=None):
         if canale is None:
-            try:
+            if ctx.author.voice is None:
+                await ctx.send(f"{ctx.author.mention} Devi essere in un canale vocale o specificare quale canale in cui radunare la gente"); return
+            else:
                 canale = ctx.author.voice.channel
-            except:
-                await ctx.send(f"{ctx.author.mention}Devi essere in un canale vocale o specificare quale canale in cui radunare la gente") 
-                return
 
         for channel in ctx.guild.voice_channels:
             for member in channel.members:
