@@ -1,5 +1,5 @@
 from discord.ext import commands
-from discord import Member
+from discord import Member, VoiceChannel
 
 class Comandi(commands.Cog):
     def __init__(self, bot):
@@ -25,6 +25,20 @@ class Comandi(commands.Cog):
             for x in range(0, amount):
                 await ctx.send(f"{user.mention}")
 
+    @commands.command(name="raduna", aliases=["radunata", "meeting"])
+    @commands.has_permissions(administrator=True)
+    async def raduna(self, ctx, canale : VoiceChannel=None):
+        if canale is None:
+            try:
+                canale = ctx.author.voice.channel
+            except:
+                await ctx.send(f"{ctx.author.mention}Devi essere in un canale vocale o specificare quale canale in cui radunare la gente") 
+                return
+
+        for channel in ctx.guild.voice_channels:
+            for member in channel.members:
+                await member.move_to(canale)
+
     @commands.command(name="cancella")
     @commands.has_permissions(manage_messages=True)
     async def cancella(self, ctx, amount : int, mode="messaggi"):
@@ -40,7 +54,6 @@ class Comandi(commands.Cog):
                 pass
             if (mode == "giorni" or mode == "d"):
                 pass
-
 
 def setup(bot):
     bot.add_cog(Comandi(bot))
