@@ -11,29 +11,15 @@ class Eventi(commands.Cog):
     @commands.Cog.listener()
     async def on_message(self, message):
         if message.author == self.bot.user: return
+
+        messaggio = message.content.lower()
+        risposta = {'bravo bot':'UwU grazie','luca gay':'si, luca è gay','borgo gay':'no tu sei gay','punta il ferro':'https://imgur.com/BZDUDxp','pablo comunista':'https://imgur.com/mD77kay'}
         
-        if message.content.lower() == 'luca gay':
-            await message.channel.send('si, luca è gay')
+        if messaggio in risposta:
+            await message.channel.send(risposta[messaggio])
 
-        if message.content.lower() == 'pablo gay' or message.content.lower() == 'borgo gay':
-            await message.channel.send('no tu sei gay')
-
-        if message.content.lower() == 'bravo bot' or message.content.lower() == 'bel bot' or message.content.lower() == 'bello sto bot':
-            await message.channel.send('UwU grazie')
-
-        if message.content.lower() == 'prefisso?':
+        if messaggio == 'prefisso?' or messaggio == 'prefisso':
             await message.channel.send(self.bot.command_prefix(self, message))
-
-        if message.content.lower() == 'punta il ferro' or message.content.lower() == 'luca ti punta il ferro':
-            await message.channel.send('luca ti punta il ferro, cosa fai?')
-            await message.channel.send('https://imgur.com/BZDUDxp')
-
-        if message.content.lower() == 'amedeo bellissimo':
-            await message.channel.send('https://imgur.com/oFAW5Uq')
-
-        if message.content.lower() == 'pablo comunista':
-            await message.channel.send('https://imgur.com/mD77kay')
-
 
 def setup(bot):
     bot.add_cog(Eventi(bot))
