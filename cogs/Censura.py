@@ -36,6 +36,7 @@ class Censura(commands.Cog):
         else:
             self.lista_censura.append(user.id)
             await ctx.send(f"{user.name} aggiunto dalla censura")
+            await user.move_to(None)
 
 def setup(bot):
     bot.add_cog(Censura(bot))
