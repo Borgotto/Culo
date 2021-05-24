@@ -1,12 +1,15 @@
 from discord.ext import commands
 from discord import Member, VoiceChannel
+from discord.utils import get
+import random
+from asyncio import sleep
 
 class Comandi(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
     @commands.Cog.listener()
-    async def on_ready(self):
+    async def on_ready(self):        
         print("Comandi caricati!")
 
     @commands.command(name="chisono")
@@ -37,6 +40,34 @@ class Comandi(commands.Cog):
         for channel in ctx.guild.voice_channels:
             for member in channel.members:
                 await member.move_to(canale)
+
+    @commands.command(name="shakera", aliases=["scuoti"])
+    @commands.has_permissions(administrator=True)
+    async def shakera(self, ctx, volte, *canali:VoiceChannel):
+        if len(canali) < 2:
+            await ctx.send(f"{ctx.author.mention} Devi specificare almeno due canali in cui vuoi shakerare la gente"); return
+        
+        utenti_chat_vocale = []
+        for channel in ctx.guild.voice_channels:
+            for member in channel.members:
+                utenti_chat_vocale.append(member)
+
+        ultimo_utente = utente_random = None
+        for i in range(0,int(volte)*2*len(utenti_chat_vocale)):
+            while ultimo_utente == utente_random:
+                utente_random = random.choice(utenti_chat_vocale)
+            ultimo_utente = utente_random
+
+            canale_random = random.choice(canali)
+            while canale_random == utente_random.voice:
+                canale_random = random.choice(canali)
+
+            await utente_random.move_to(canale_random)
+            await sleep(0.1)
+
+        for member in utenti_chat_vocale:
+            await member.move_to(canali[0])
+            await sleep(0.1)
 
     @commands.command(name="cancella")
     @commands.has_permissions(manage_messages=True)
