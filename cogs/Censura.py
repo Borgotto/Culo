@@ -23,7 +23,7 @@ class Censura(commands.Cog):
         if member.id in self.lista_censura:
             await member.move_to(None)
     
-    @commands.command(name="censura")
+    @commands.command(name="censura", aliases=['zittisci'], help="Censura un utente (disabilita messaggi e chat vocale)")
     @commands.has_permissions(administrator=True)
     async def censura(self, ctx, user : Member):
         if user.id == self.bot.user.id: 
