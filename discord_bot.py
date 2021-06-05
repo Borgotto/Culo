@@ -52,9 +52,9 @@ bot = commands.Bot(command_prefix = (get_prefix), owner_id=289887222310764545, i
 
 
 
-##################
-#    on ready    #
-##################
+######################
+#    on bot ready    #
+######################
 @bot.event
 async def on_ready():
     #updates to bot presence
@@ -78,7 +78,6 @@ async def on_ready():
             print("Server name:", guild.name)
             print("Server prefix:", prefixes[str(guild.id)], end="\n\n")
     print ("--------------------------------\n")
-
 
 
 
@@ -111,18 +110,18 @@ async def on_guild_remove(guild):
     #updates to bot presence
     await bot.change_presence(status = discord.Status.online, activity = (discord.Activity(name= f"alle bestemmie di {len(bot.guilds)} server...", type=discord.ActivityType.listening)))
 
-@bot.command(name="cambia_prefisso", aliases=["prefisso"])
+@bot.command(name="cambia_prefisso", aliases=["prefisso"], help="Cambia il prefisso per i comandi del bot")
 @commands.has_permissions(administrator=True) 
-async def cambia_prefisso(ctx, prefix : str): 
+async def cambia_prefisso(ctx, prefisso : str): 
     with open('prefixes.json', 'r') as file:
         prefixes = json.load(file)
 
-    prefixes[str(ctx.guild.id)] = prefix
+    prefixes[str(ctx.guild.id)] = prefisso
 
     with open('prefixes.json', 'w') as file: 
         json.dump(prefixes, file, indent=4)
 
-    await ctx.send(f'Prefisso cambiato a: {prefix}') 
+    await ctx.send(f'Prefisso cambiato a: {prefisso}') 
 
 
 
@@ -130,20 +129,20 @@ async def cambia_prefisso(ctx, prefix : str):
 #######################
 #    cogs handling    #
 #######################
-@bot.command()
-@commands.has_permissions(administrator=True)
-async def attiva(ctx, plugin : str):
-    bot.load_extension(f'cogs.{plugin.title()}')
-    await ctx.send(f'Ho attivato: {plugin.title()}')
+@bot.command(help="Attiva una cog")
+@commands.is_owner()
+async def attiva(ctx, cog : str):
+    bot.load_extension(f'cogs.{cog.title()}')
+    await ctx.send(f'Ho attivato: {cog.title()}')
 
-@bot.command()
-@commands.has_permissions(administrator=True)
-async def disattiva(ctx, plugin : str):
-    bot.unload_extension(f'cogs.{plugin.title()}')
-    await ctx.send(f'Ho disattivato: {plugin.title()}')
+@bot.command(help="Disattiva una cog")
+@commands.is_owner()
+async def disattiva(ctx, cog : str):
+    bot.unload_extension(f'cogs.{cog.title()}')
+    await ctx.send(f'Ho disattivato: {cog.title()}')
 
-@bot.command()
-@commands.has_permissions(administrator=True)
+@bot.command(help="Ricarica tutte le cog")
+@commands.is_owner()
 async def ricarica(ctx):
     for filename in os.listdir('./cogs'):
         if (filename.endswith('.py')):            
