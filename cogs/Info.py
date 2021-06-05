@@ -71,7 +71,7 @@ class Info(commands.Cog):
 
 	#comando di debug per stampare la lista dei server
 	@commands.command(name="lista_server", aliases=["lista server", "servers"])
-	@commands.has_permissions(administrator=True)
+	@commands.is_owner()
 	async def lista_server(self, ctx):
 		if (ctx.author.id == self.bot.owner_id):
 			message = f""
