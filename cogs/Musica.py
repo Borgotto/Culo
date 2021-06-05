@@ -133,6 +133,10 @@ class Musica(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.players = {}
+    
+    @commands.Cog.listener()
+    async def on_ready(self):        
+        print("Musica caricata!")
 
     async def cleanup(self, guild):
         try:

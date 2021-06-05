@@ -9,7 +9,7 @@ class Censura(commands.Cog):
 
     @commands.Cog.listener()
     async def on_ready(self):
-        print("Censure caricate!")
+        print("Censura caricata!")
 
     @commands.Cog.listener()
     async def on_message(self, message):
