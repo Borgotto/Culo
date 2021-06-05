@@ -13,8 +13,7 @@ class Info(commands.Cog):
 	async def on_ready(self):
 		print("Info caricati!")
 
-
-	@commands.command(name="userinfo", aliases=["memberinfo", "ui", "mi"])
+	@commands.command(name="userinfo", aliases=["memberinfo", "ui", "mi"], help="Mostra le informazini sull'account discord di un utente")
 	async def user_info(self, ctx, target: Optional[Member]):
 		target = target or ctx.author
 
@@ -37,7 +36,7 @@ class Info(commands.Cog):
 
 		await ctx.send(embed=embed)
 
-	@commands.command(name="serverinfo", aliases=["guildinfo", "si", "gi"])
+	@commands.command(name="serverinfo", aliases=["guildinfo", "si", "gi"], help="Mostra le informazioni del server discord")
 	async def server_info(self, ctx):
 		embed = Embed(title="Server information", timestamp=datetime.utcnow())
 
@@ -69,23 +68,18 @@ class Info(commands.Cog):
 
 		await ctx.send(embed=embed)
 
-	#comando di debug per stampare la lista dei server
-	@commands.command(name="lista_server", aliases=["lista server", "servers"])
+	@commands.command(name="lista_server", aliases=["lista server", "servers"], help="Stampa la lista di tutti i server in cui il bot fa parte")
 	@commands.is_owner()
 	async def lista_server(self, ctx):
-		if (ctx.author.id == self.bot.owner_id):
-			message = f""
-			with open('prefixes.json', 'r') as file: 
-				prefixes = json.load(file) 
-				message = message + f'The bot is in {len(self.bot.guilds)} servers!\n'
-				message = message + f'List of all servers the bot is in:\n\n'
-				for guild in self.bot.guilds:
-					message = message + f'Server name:  "{str(guild.name)}"\n'
-					message = message + f'Server prefix:  "\\{str(prefixes[str(guild.id)])}"\n\n'
-			await ctx.send(message)
-		else:
-			await ctx.send(f'Solo il mio creatore <@{self.bot.owner_id}> può stampare la lista dei server per ragioni di sicurezza')
-
+		message = f""
+		with open('prefixes.json', 'r') as file: 
+			prefixes = json.load(file) 
+			message = message + f'The bot is in {len(self.bot.guilds)} servers!\n'
+			message = message + f'List of all servers the bot is in:\n\n'
+			for guild in self.bot.guilds:
+				message = message + f'Server name:  "{str(guild.name)}"\n'
+				message = message + f'Server prefix:  "\\{str(prefixes[str(guild.id)])}"\n\n'
+		await ctx.send(message)
 
 def setup(bot):
 	bot.add_cog(Info(bot))
