@@ -12,15 +12,15 @@ class Comandi(commands.Cog):
     async def on_ready(self):        
         print("Comandi caricati!")
 
-    @commands.command(name="chisono")
+    @commands.command(name="chisono", aliases=['whoami'], help="Ti ricorda chi sei veramente")
     async def chisono(self, ctx):
         await ctx.send(f"Sei un trimone {ctx.message.author.name}")
 
-    @commands.command(name="scorreggia", aliases=["scoreggia", "cagati"])
+    @commands.command(name="scorreggia", aliases=["scoreggia", "cagati"], help="Comando inutile, provare per credere")
     async def scorreggia(self, ctx):
         await ctx.send(f"Oh no mi sono cagato addosso")
 
-    @commands.command(name="pinga", aliases=["pinga_utente"])
+    @commands.command(name="pinga", aliases=["pinga_utente", "ping"], help="Pinga un utente")
     async def pinga(self, ctx, user : Member, amount=1): 
         if (amount > 10):
                 await ctx.send("Oh ma sei impazzito? Non posso pingare tutte quelle volte")
@@ -28,7 +28,7 @@ class Comandi(commands.Cog):
             for x in range(0, amount):
                 await ctx.send(f"{user.mention}")
 
-    @commands.command(name="raduna", aliases=["radunata", "meeting"])
+    @commands.command(name="raduna", aliases=["radunata", "meeting"], help="Raduna tutti gli utenti in chat vocale nello stesso canale")
     @commands.has_permissions(administrator=True)
     async def raduna(self, ctx, canale : VoiceChannel=None):
         if canale is None:
@@ -41,7 +41,7 @@ class Comandi(commands.Cog):
             for member in channel.members:
                 await member.move_to(canale)
 
-    @commands.command(name="shakera", aliases=["scuoti"])
+    @commands.command(name="shakera", aliases=["scuoti"], help="Shakera tutti gli utenti in chat vocale tra alcuni canali")
     @commands.has_permissions(administrator=True)
     async def shakera(self, ctx, volte, *canali:VoiceChannel):
         if len(canali) < 2:
@@ -69,7 +69,7 @@ class Comandi(commands.Cog):
             await member.move_to(canali[0])
             await sleep(0.1)
 
-    @commands.command(name="cancella")
+    @commands.command(name="cancella", aliases=["delete","canc"],help="Cancella # messaggi")
     @commands.has_permissions(manage_messages=True)
     async def cancella(self, ctx, amount : int, mode="messaggi"):
         if (mode == "messaggi" or mode == "mess"):
