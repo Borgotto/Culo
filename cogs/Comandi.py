@@ -33,7 +33,7 @@ class Comandi(commands.Cog):
     async def raduna(self, ctx, canale : VoiceChannel=None):
         if canale is None:
             if ctx.author.voice is None:
-                await ctx.send(f"{ctx.author.mention} Devi essere in un canale vocale o specificare quale canale in cui radunare la gente"); return
+                return await ctx.send(f"{ctx.author.mention} Devi essere in un canale vocale o specificare quale canale in cui radunare la gente")
             else:
                 canale = ctx.author.voice.channel
 
@@ -45,7 +45,7 @@ class Comandi(commands.Cog):
     @commands.has_permissions(administrator=True)
     async def shakera(self, ctx, volte, *canali:VoiceChannel):
         if len(canali) < 2:
-            await ctx.send(f"{ctx.author.mention} Devi specificare almeno due canali in cui vuoi shakerare la gente"); return
+            return await ctx.send(f"{ctx.author.mention} Devi specificare almeno due canali in cui vuoi shakerare la gente")
         
         utenti_chat_vocale = []
         for channel in ctx.guild.voice_channels:
