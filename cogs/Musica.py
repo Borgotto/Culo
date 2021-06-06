@@ -8,7 +8,7 @@ from discord import Embed, FFmpegPCMAudio, HTTPException, PCMVolumeTransformer, 
 
 #'format': 'bestaudio/best' is too heavy for a rpi zero
 ytdlopts = {
-    'format': 'bestaudio',
+    'format': 'worstaudio/worst',
     'outtmpl': 'downloads/%(extractor)s-%(id)s-%(title)s.%(ext)s',
     'restrictfilenames': True,
     'noplaylist': True,
@@ -28,11 +28,11 @@ ffmpegopts = {
 
 ytdl = YoutubeDL(ytdlopts)
 
-class VoiceConnectionError(commands.CommandError):
-    """Custom Exception class for connection errors."""
+#class VoiceConnectionError(commands.CommandError):
+    #"""Custom Exception class for connection errors."""
 
-class InvalidVoiceChannel(VoiceConnectionError):
-    """Exception for cases of invalid Voice Channels."""
+#class InvalidVoiceChannel(VoiceConnectionError):
+    #"""Exception for cases of invalid Voice Channels."""
 
 class YTDLSource(PCMVolumeTransformer):
 
@@ -166,8 +166,8 @@ class Musica(commands.Cog):
                 return await ctx.send('Questo comando non può essere usato nei messaggi privati')
             except HTTPException:
                 pass
-        elif isinstance(error, InvalidVoiceChannel):
-            await ctx.send('Devi essere in un canale per mettere la musica')
+        #elif isinstance(error, InvalidVoiceChannel):
+            #await ctx.send('Devi essere in un canale per mettere la musica')
 
     def get_player(self, ctx):
         try:
@@ -185,7 +185,8 @@ class Musica(commands.Cog):
         except AttributeError:
             if ctx.author.voice is None:
                 await ctx.send(f"{ctx.author.mention} Devi essere in un canale vocale per mettere la musica")
-            raise InvalidVoiceChannel(f'Nessun canale in cui entrare.')
+            #raise InvalidVoiceChannel(f'Nessun canale in cui entrare.')
+            return
 
         vc = ctx.voice_client
 
@@ -195,12 +196,14 @@ class Musica(commands.Cog):
             try:
                 await vc.move_to(channel)
             except asyncio.TimeoutError:
-                raise VoiceConnectionError(f'Spostamento canale: <{channel}> timed out.')
+                #raise VoiceConnectionError(f'Spostamento canale: <{channel}> timed out.')
+                return
         else:
             try:
                 await channel.connect()
             except asyncio.TimeoutError:
-                raise VoiceConnectionError(f'Connessione al canale: <{channel}> timed out.')
+                #raise VoiceConnectionError(f'Connessione al canale: <{channel}> timed out.')
+                return
         embed = Embed(title="Entrato in chiamata", color=0xfefefe)
         embed.add_field(name="Connesso a:", value=channel, inline=True)
 
