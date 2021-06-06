@@ -4,7 +4,7 @@ from async_timeout import timeout
 from functools import partial
 from youtube_dl import YoutubeDL
 from discord.ext import commands
-from discord import Embed, FFmpegPCMAudio, HTTPException, PCMVolumeTransformer
+from discord import Embed, FFmpegPCMAudio, HTTPException, PCMVolumeTransformer, Color
 
 ytdlopts = {
     'format': 'bestaudio/best',
@@ -27,6 +27,12 @@ ffmpegopts = {
 
 ytdl = YoutubeDL(ytdlopts)
 
+class VoiceConnectionError(commands.CommandError):
+    """Custom Exception class for connection errors."""
+
+class InvalidVoiceChannel(VoiceConnectionError):
+    """Exception for cases of invalid Voice Channels."""
+
 class YTDLSource(PCMVolumeTransformer):
 
     def __init__(self, source, *, data, requester):
@@ -42,23 +48,20 @@ class YTDLSource(PCMVolumeTransformer):
         return self.__getattribute__(item)
 
     @classmethod
-    async def create_source(cls, ctx, search: str, *, loop, download=False):
+    async def create_source(cls, ctx, search: str, *, loop, download=False, add_to_q=True):
         loop = loop or asyncio.get_event_loop()
 
         to_run = partial(ytdl.extract_info, url=search, download=download)
         data = await loop.run_in_executor(None, to_run)
 
         if 'entries' in data:
-            data = data['entries'][0]
+            data = data['entries'][0]      
 
-        await ctx.send(f'```ini\n[ Aggiunto {data["title"]} alla coda ]\n```')
+        if add_to_q is True:
+            embed = Embed(title="Aggiunto alla coda:", description=f'[{data["title"]}]({data["webpage_url"]}) [{ctx.author.mention}]', color=0xfefefe)
+            await ctx.send(embed=embed)
 
-        if download:
-            source = ytdl.prepare_filename(data)
-        else:
-            return {'webpage_url': data['webpage_url'], 'requester': ctx.author, 'title': data['title']}
-
-        return cls(FFmpegPCMAudio(source), data=data, requester=ctx.author)
+        return {'webpage_url': data['webpage_url'], 'requester': ctx.author, 'title': data['title']}
 
     @classmethod
     async def regather_stream(cls, data, *, loop):
@@ -112,7 +115,9 @@ class MusicPlayer(commands.Cog):
             self.current = source
 
             self._guild.voice_client.play(source, after=lambda _: self.bot.loop.call_soon_threadsafe(self.next.set))
-            self.np = await self._channel.send(f'**In riproduzione:** `{source.title}` ' f'[`{source.requester}`]')
+
+            embed = Embed(title="Ora in riproduzione:", description=f'[{source.title}]({source.web_url}) [{source.requester.mention}]', color=0xfefefe)
+            self.np = await self._channel.send(embed=embed)
             await self.next.wait()
 
             source.cleanup()
@@ -149,6 +154,20 @@ class Musica(commands.Cog):
         except KeyError:
             pass
 
+    async def __local_check(self, ctx):
+        if not ctx.guild:
+            raise commands.NoPrivateMessage
+        return True
+
+    async def __error(self, ctx, error):
+        if isinstance(error, commands.NoPrivateMessage):
+            try:
+                return await ctx.send('Questo comando non può essere usato nei messaggi privati')
+            except HTTPException:
+                pass
+        elif isinstance(error, InvalidVoiceChannel):
+            await ctx.send('Devi essere in un canale per mettere la musica')
+
     def get_player(self, ctx):
         try:
             player = self.players[ctx.guild.id]
@@ -158,12 +177,14 @@ class Musica(commands.Cog):
 
         return player
 
-    #@commands.command(name='connect', aliases=['join'])
+    @commands.command(name='connetti', aliases=['join','entra','connect'], help="Fai connettere il bot al canale vocale")
     async def connect_(self, ctx):
         try:
             channel = ctx.author.voice.channel
         except AttributeError:
-            await ctx.send('Nessun canale in cui entrare.'); return
+            if ctx.author.voice is None:
+                await ctx.send(f"{ctx.author.mention} Devi essere in un canale vocale per mettere la musica")
+            raise InvalidVoiceChannel(f'Nessun canale in cui entrare.')
 
         vc = ctx.voice_client
 
@@ -173,13 +194,13 @@ class Musica(commands.Cog):
             try:
                 await vc.move_to(channel)
             except asyncio.TimeoutError:
-                await ctx.send(f'Spostamento canale: <{channel}> timed out.'); return
+                raise VoiceConnectionError(f'Spostamento canale: <{channel}> timed out.')
         else:
             try:
                 await channel.connect()
             except asyncio.TimeoutError:
-                await ctx.send(f'Connessione al canale: <{channel}> timed out.'); return
-        embed = Embed(title="Entrato in chiamata")
+                raise VoiceConnectionError(f'Connessione al canale: <{channel}> timed out.')
+        embed = Embed(title="Entrato in chiamata", color=0xfefefe)
         embed.add_field(name="Connesso a:", value=channel, inline=True)
 
         #await ctx.send(embed=embed)
@@ -188,6 +209,9 @@ class Musica(commands.Cog):
     async def play_(self, ctx, *, search: str):
         await ctx.trigger_typing()
 
+        if ctx.author.voice is None:
+            return await ctx.send(f"{ctx.author.mention} Devi essere in un canale vocale per mettere la musica")
+
         vc = ctx.voice_client
 
         if not vc:
@@ -195,7 +219,7 @@ class Musica(commands.Cog):
 
         player = self.get_player(ctx)
 
-        source = await YTDLSource.create_source(ctx, search, loop=self.bot.loop, download=False)
+        source = await YTDLSource.create_source(ctx, search, loop=self.bot.loop, download=False, add_to_q=(player.current is not None))
 
         await player.queue.put(source)
 
@@ -210,7 +234,7 @@ class Musica(commands.Cog):
             return
 
         vc.pause()
-        await ctx.send(f'**`{ctx.author}`** ha pausato la canzone')
+        await ctx.message.add_reaction("🆗")
 
     @commands.command(name='riprendi', aliases=['unpause', 'resume'], help="Riprendi la riproduzione della canzone")
     async def resume_(self, ctx):
@@ -222,7 +246,7 @@ class Musica(commands.Cog):
             return
 
         vc.resume()
-        await ctx.send(f'**`{ctx.author}`** ha ripreso la riproduzione')
+        await ctx.message.add_reaction("🆗")
 
     @commands.command(name='skip', aliases=['next'], help="Salta la canzone corrente")
     async def skip_(self, ctx):
@@ -237,25 +261,27 @@ class Musica(commands.Cog):
             return
 
         vc.stop()
-        await ctx.send(f'**`{ctx.author}`**: ha saltato la canzone')
+        await ctx.message.add_reaction("🆗")
 
     @commands.command(name='coda', aliases=['q', 'playlist', 'queue'], help="Mostra la coda delle canzoni")
     async def queue_info(self, ctx):
         vc = ctx.voice_client
 
-        if not vc or not vc.is_connected():
-            return await ctx.send('Non sono connesso a un canale vocale!')
-
         player = self.get_player(ctx)
         if player.queue.empty():
-            return await ctx.send('Non ci sono altre canzoni nella coda.')
+            return await ctx.send('Non ci sono canzoni nella coda.')
 
-        upcoming = list(itertools.islice(player.queue._queue, 0, 5))
+        #upcoming = list(itertools.islice(player.queue._queue, 0, 5))
+        #fmt = '\n'.join(f'[{_["title"]}]({_["webpage_url"]}) [{_["requester"].mention}]' for _ in player.queue._queue)
+        #embed = Embed(title=f'Canzoni in coda:', color=0xfefefe, description=fmt)
+        x=0
+        description = f"```ml\nCoda Canzoni:\n\n\t⬐ prossima traccia\n"
+        for song in player.queue._queue:
+            x+=1
+            description += f'{x}) {song["title"]}\n'
+        description += '\n\tFine della coda!```'
 
-        fmt = '\n'.join(f'**`{_["title"]}`**' for _ in upcoming)
-        embed = Embed(title=f'Prossima canzone: {len(upcoming)}', description=fmt)
-
-        await ctx.send(embed=embed)
+        await ctx.send(description)
 
     @commands.command(name='in_riproduzione', aliases=['np', 'current', 'currentsong', 'playing', 'ir'], help="Mostra la canzone in riproduzione")
     async def now_playing_(self, ctx):
@@ -272,39 +298,43 @@ class Musica(commands.Cog):
             await player.np.delete()
         except HTTPException:
             pass
+        
+        embed = Embed(title="Ora in riproduzione:", description=f'{vc.source.title} [{ctx.author.mention}]', color=0xfefefe)
+        player.np = await ctx.send(embed=embed)
 
-        player.np = await ctx.send(f'**Ora in riproduzione:** `{vc.source.title}` 'f'[`{vc.source.requester}`]') 
-
-    @commands.command(name='volume', aliases=['vol'], help="Cambia il volume della musica")
-    async def change_volume(self, ctx, *, vol: float):
+    @commands.command(name='volume', aliases=['vol','v'], help="Cambia il volume della musica")
+    async def change_volume(self, ctx, *, vol: float=None):
         vc = ctx.voice_client
 
         if not vc or not vc.is_connected():
             return await ctx.send('Non sono connesso a un canale vocale!', )
 
-        if not 0 < vol < 101:
-            return await ctx.send('Inserisci un valora compreso tra 1 e 100')
-
         player = self.get_player(ctx)
+        
+        if vol is None:
+            vol = player.volume*100
+        elif not 0 < vol < 101:
+            return await ctx.send('Inserisci un valora compreso tra 1 e 100')
+        elif vc.source:
+                vc.source.volume = vol / 100
+                player.volume = vol / 100     
+        
+        if vol >= 80:
+            emoji = ':loud_sound:'
+        elif 30 < vol < 80:
+            emoji = ':sound:'
+        elif vol <=30:            
+            emoji = ':speaker:'   
 
-        if vc.source:
-            vc.source.volume = vol / 100
-
-        player.volume = vol / 100
-        embed = Embed(title="Volume",
-        description=f'Volume cambiato da **{ctx.author.name}**')
-        embed.add_field(name="Volume: ", value=vol, inline=True)
+        embed = Embed(title=f'**Volume:**  {int(vol)}  {emoji}:', color=0xfefefe)
         await ctx.send(embed=embed)
-        # await ctx.send(f'**`{ctx.author}`**: Set the volume to **{vol}%**')
 
     @commands.command(name='esci', aliases=['stop','leave','fuori'], help="Stoppa la musica (rimuove la coda)")
     async def stop_(self, ctx):
         vc = ctx.voice_client
 
-        if not vc or not vc.is_connected():
-            return await ctx.send("Non c'è niente in riproduzione!")
-
         await self.cleanup(ctx.guild)
+        await ctx.message.add_reaction("🆗")
 
 def setup(bot):
     bot.add_cog(Musica(bot))
