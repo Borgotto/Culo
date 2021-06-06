@@ -6,8 +6,9 @@ from youtube_dl import YoutubeDL
 from discord.ext import commands
 from discord import Embed, FFmpegPCMAudio, HTTPException, PCMVolumeTransformer, Color
 
+#'format': 'bestaudio/best' is too heavy for a rpi zero
 ytdlopts = {
-    'format': 'bestaudio/best',
+    'format': 'bestaudio',
     'outtmpl': 'downloads/%(extractor)s-%(id)s-%(title)s.%(ext)s',
     'restrictfilenames': True,
     'noplaylist': True,
