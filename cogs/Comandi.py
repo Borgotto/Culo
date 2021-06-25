@@ -19,8 +19,8 @@ class Comandi(commands.Cog):
         try:
             with open('/sys/class/thermal/thermal_zone0/temp') as file:
                 temperatura = float(file.readline(3))/10
-                emoji = ':fire:' if temperatura > 56 else ':ice:'
-                await ctx.send(f"*Temperatura:* **{temperatura}***°C*  {emoji}")
+                emoji = ':fire:' if temperatura > 56 else ':ice_cube:'
+                await ctx.send(f"*Temperatura:*  **{temperatura}** *°C*  {emoji}")
         except:
             await ctx.send(f"C'è stato un errore nel leggere la temperatura, il bot sta eseguendo sul raspberry? :thinking:")
 
