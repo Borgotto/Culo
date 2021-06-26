@@ -18,7 +18,7 @@ class Eventi(commands.Cog):
         if messaggio in risposta:
             await message.channel.send(risposta[messaggio])
 
-        if messaggio == 'prefisso?' or messaggio == 'prefisso':
+        if messaggio == 'prefisso?':
             await message.channel.send(self.bot.command_prefix(self, message))
 
 def setup(bot):
