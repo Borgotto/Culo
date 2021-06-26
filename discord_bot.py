@@ -58,7 +58,7 @@ bot = commands.Bot(command_prefix = (get_prefix), owner_id=289887222310764545, i
 @bot.event
 async def on_ready():
     #updates to bot presence
-    await bot.change_presence(status = discord.Status.online, activity = (discord.Activity(name= f"Luca dormire 👀", type=discord.ActivityType.watching)))
+    await bot.change_presence(status = discord.Status.online, activity = (discord.Activity(name= f"🍑 👀", type=discord.ActivityType.watching)))
     
     #makes sure the different prefixes are up to date with the bot's actual servers
     update_prefixes()
