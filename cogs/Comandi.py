@@ -15,7 +15,7 @@ class Comandi(commands.Cog):
 
 
     @commands.command(name="temperatura", aliases=['temp'], help="Se il bot gira su un raspberry ritorna la temperatura della CPU")
-    @commands.has_permissions(owner=True)
+    @commands.is_owner()
     async def temperatura(self, ctx):
         try:
             with open('/sys/class/thermal/thermal_zone0/temp') as file:

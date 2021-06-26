@@ -177,7 +177,7 @@ class Musica(commands.Cog):
 
         return player
 
-    @commands.command(name='connetti', aliases=['join','entra','connect'], help="Fai connettere il bot al canale vocale")
+    @commands.command(name='connetti', aliases=['join','entra','connect','connettiti'], help="Fai connettere il bot al canale vocale")
     async def connect_(self, ctx):
         try:
             channel = ctx.author.voice.channel
@@ -248,7 +248,7 @@ class Musica(commands.Cog):
         vc.resume()
         await ctx.message.add_reaction("🆗")
 
-    @commands.command(name='skip', aliases=['next'], help="Salta la canzone corrente")
+    @commands.command(name='skip', aliases=['next','skippa'], help="Salta la canzone corrente")
     async def skip_(self, ctx):
         vc = ctx.voice_client
 
