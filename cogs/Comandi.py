@@ -14,7 +14,7 @@ class Comandi(commands.Cog):
         print("Comandi caricati!")
 
 
-    @commands.command(name="temperatura", aliases=['temp'], help="Se il bot gira su linux ritorna la temperatura della CPU")
+    @commands.command(name="temperatura", aliases=['temp'], help="Se il bot gira su un raspberry ritorna la temperatura della CPU")
     @commands.has_permissions(owner=True)
     async def temperatura(self, ctx):
         try:
@@ -23,7 +23,7 @@ class Comandi(commands.Cog):
                 emoji = ':fire:' if temperatura > 56 else ':ice_cube:'
                 await ctx.send(f"*Temperatura:*  **{temperatura}** *°C*  {emoji}")
         except:
-            await ctx.send(f"C'è stato un errore nel leggere la temperatura, il bot sta eseguendo su linux? :thinking:")
+            await ctx.send(f"C'è stato un errore nel leggere la temperatura, il bot sta eseguendo su un raspberry? :thinking:")
 
 
     @commands.command(name="chisono", aliases=['whoami'], help="Ti ricorda chi sei veramente")
