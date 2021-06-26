@@ -51,3 +51,4 @@
 - [x] Musica
 - [ ] Censura ***(ha bisogno di un rewrite)***
 - [ ] Meteo
+- [ ] Image processing
