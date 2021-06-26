@@ -95,7 +95,7 @@ async def on_guild_join(guild):
         json.dump(prefixes, file, indent=4) 
     
     #updates to bot presence
-    await bot.change_presence(status = discord.Status.online, activity = (discord.Activity(name= f"alle bestemmie di {len(bot.guilds)} server...", type=discord.ActivityType.listening)))
+    #await bot.change_presence(status = discord.Status.online, activity = (discord.Activity(name= f"alle bestemmie di {len(bot.guilds)} server...", type=discord.ActivityType.listening)))
 
 @bot.event
 async def on_guild_remove(guild): 
@@ -108,7 +108,7 @@ async def on_guild_remove(guild):
         json.dump(prefixes, file, indent=4)
 
     #updates to bot presence
-    await bot.change_presence(status = discord.Status.online, activity = (discord.Activity(name= f"alle bestemmie di {len(bot.guilds)} server...", type=discord.ActivityType.listening)))
+    #await bot.change_presence(status = discord.Status.online, activity = (discord.Activity(name= f"alle bestemmie di {len(bot.guilds)} server...", type=discord.ActivityType.listening)))
 
 @bot.command(name="cambia_prefisso", aliases=["prefisso"], help="Cambia il prefisso per i comandi del bot")
 @commands.has_permissions(administrator=True) 
