@@ -3,9 +3,11 @@
 #### Nato come scherzo tra amici, è cresciuto e diventato un vero e proprio bot 
 ##
 ### Requisiti:
-- Python 3.9+
+- [Python 3.9+](https://www.python.org/downloads/)
+- Un [token](https://discord.com/developers/applications) per il bot
 - [Discord.py Rewrite](https://discordpy.readthedocs.io/en/latest/)
-- Un token per il bot
+- [youtube_dl](https://youtube-dl.org/)
+- [ffmpeg](https://ffmpeg.org/download.html)
 ##
 ### **Features:**
 - #### Prefisso del bot dinamico e modificabile server per server *(default:* 🍑 *)*
