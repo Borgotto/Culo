@@ -13,14 +13,9 @@ def get_token():
         with open('token') as file:
             return file.readline()
     except IOError:
-        if len(sys.argv) > 0:
-            token = 'NTkzMDk2OTI1OTQ3ODg3NjQ4.XRI6jg.Uza9kWtJfUeWi-RQxlxmS9n-azQ'
-            with open('token', 'w') as file:
-                file.write(token)
-            return token
-        else:
-            print("\nInserisci il token del bot come argomento o crea un file 'token' con il token all'interno\n")
-            raise Exception        
+        if len(sys.argv) > 1:
+            return sys.argv[1]
+        return os.getenv['BOT_TOKEN']
 
 #function that returns the bot prefix by the guild id
 def get_prefix(client, message):
