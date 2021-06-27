@@ -74,11 +74,11 @@ class Info(commands.Cog):
 		message = f""
 		with open('prefixes.json', 'r') as file: 
 			prefixes = json.load(file) 
-			message = message + f'The bot is in {len(self.bot.guilds)} servers!\n'
-			message = message + f'List of all servers the bot is in:\n\n'
+			message = message + f'Il bot è in {len(self.bot.guilds)} server!\n'
+			message = message + f'Lista dei server in cui il bot è dentro:\n\n'
 			for guild in self.bot.guilds:
-				message = message + f'Server name:  "{str(guild.name)}"\n'
-				message = message + f'Server prefix:  "\\{str(prefixes[str(guild.id)])}"\n\n'
+				message = message + f'Nome server:  "{str(guild.name)}"\n'
+				message = message + f'Prefisso server:  "\\{str(prefixes[str(guild.id)])}"\n\n'
 		await ctx.send(message)
 
 def setup(bot):

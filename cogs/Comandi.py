@@ -28,7 +28,7 @@ class Comandi(commands.Cog):
 
     @commands.command(name="chisono", aliases=['whoami'], help="Ti ricorda chi sei veramente")
     async def chisono(self, ctx):
-        await ctx.send(f"Sei un trimone {ctx.message.author.name}")
+        await ctx.send(f"Sei un trimone {ctx.message.author.mention}")
 
 
     @commands.command(name="scorreggia", aliases=["scoreggia", "cagati"], help="Comando inutile, provare per credere")
@@ -38,7 +38,7 @@ class Comandi(commands.Cog):
 
     @commands.command(name="pinga", aliases=["pinga_utente", "ping"], help="Pinga un utente")
     async def pinga(self, ctx, user : Member, amount=1): 
-        if (amount > 5):
+        if (amount > 16):
                 await ctx.send("Oh ma sei impazzito? Non posso pingare tutte quelle volte")
         else:                
             for x in range(0, amount):

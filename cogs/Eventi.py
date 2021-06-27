@@ -19,7 +19,7 @@ class Eventi(commands.Cog):
             await message.channel.send(risposta[messaggio])
 
         if messaggio == 'prefisso?':
-            await message.channel.send(self.bot.command_prefix(self, message))
+            await message.channel.send(f"Il prefisso per i comandi è: `{self.bot.command_prefix(self, message)}`")
 
 def setup(bot):
     bot.add_cog(Eventi(bot))
