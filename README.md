@@ -2,6 +2,11 @@
 #### Il bot di Discord più inutile del mondo *(o almeno lo era all'inizio dello sviluppo)*.
 #### Nato come scherzo tra amici, è cresciuto e diventato un vero e proprio bot 
 ##
+### Requisiti:
+- Python 3.9+
+- [Discord.py Rewrite](https://discordpy.readthedocs.io/en/latest/)
+- Un token per il bot
+##
 ### **Features:**
 - #### Prefisso del bot dinamico e modificabile server per server *(default:* 🍑 *)*
   - Basta scrivere `🍑prefisso <il prefisso>` per modificare il prefisso del bot nel server
@@ -46,3 +51,4 @@
 - [x] Musica
 - [ ] Censura ***(ha bisogno di un rewrite)***
 - [ ] Meteo
+- [ ] Image processing
