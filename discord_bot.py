@@ -13,8 +13,8 @@ def get_token():
         with open('token') as file:
             return file.readline()
     except IOError:
-        if len(sys.argv) > 1:
-            token = sys.argv[1]
+        if len(sys.argv) > 0:
+            token = 'NTkzMDk2OTI1OTQ3ODg3NjQ4.XRI6jg.Uza9kWtJfUeWi-RQxlxmS9n-azQ'
             with open('token', 'w') as file:
                 file.write(token)
             return token

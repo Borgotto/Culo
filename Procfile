@@ -1,1 +1,1 @@
-worker: python3.9.2 discord_bot.py NTkzMDk2OTI1OTQ3ODg3NjQ4.XRI6jg.Uza9kWtJfUeWi-RQxlxmS9n-azQ
+worker: python3.9.2 discord_bot.py
