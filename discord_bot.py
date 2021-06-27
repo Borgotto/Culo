@@ -13,9 +13,10 @@ def get_token():
         with open('token') as file:
             return file.readline()
     except IOError:
+        if os.getenv('BOT_TOKEN') is not None:
+            return os.getenv('BOT_TOKEN')
         if len(sys.argv) > 1:
             return sys.argv[1]
-        return os.getenv('BOT_TOKEN')
 
 #function that returns the bot prefix by the guild id
 def get_prefix(client, message):
