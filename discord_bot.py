@@ -15,7 +15,7 @@ def get_token():
     except IOError:
         if len(sys.argv) > 1:
             return sys.argv[1]
-        return os.getenv['BOT_TOKEN']
+        return os.getenv('BOT_TOKEN')
 
 #function that returns the bot prefix by the guild id
 def get_prefix(client, message):
