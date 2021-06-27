@@ -14,7 +14,7 @@ def get_token():
             return file.readline()
     except IOError:
         if os.getenv('BOT_TOKEN') is not None:
-            return os.getenv('BOT_TOKEN')
+            return os.environ.get("BOT_TOKEN")
         if len(sys.argv) > 1:
             return sys.argv[1]
         print("\nTi manca il TOKEN del bot!\nPassalo come argomento\nOppure imposta una variabile d'ambiente 'BOT_TOKEN'\nOppure crea un file 'TOKEN' con all'interno il token\n")
