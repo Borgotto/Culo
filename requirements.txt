@@ -1,0 +1,4 @@
+pip
+youtube_dl
+discord.py[voice]
+ffmpeg

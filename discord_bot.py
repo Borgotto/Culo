@@ -2,6 +2,7 @@ import discord
 from discord.ext import commands
 from discord import Intents
 import os
+import sys
 import json
 
 ###################
@@ -12,11 +13,14 @@ def get_token():
         with open('token') as file:
             return file.readline()
     except IOError:
-        print("Insert bot token: ", end="")
-        token = str(input())
-        with open('token', 'w') as file:
-            file.write(token)
-        return token
+        if len(sys.argv) > 1:
+            token = sys.argv[1]
+            with open('token', 'w') as file:
+                file.write(token)
+            return token
+        else:
+            print("\nInserisci il token del bot come argomento o crea un file 'token' con il token all'interno\n")
+            raise Exception        
 
 #function that returns the bot prefix by the guild id
 def get_prefix(client, message):
