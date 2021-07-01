@@ -2,3 +2,4 @@ token
 kick_user.pyw
 __pycache__/
 cogs/__pycache__/
+.vscode/launch.json
