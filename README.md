@@ -35,9 +35,6 @@
   - `in_riproduzione` stampa la canzone corrente
   - `volume <0-100>` imposta il volume del bot *(default: 50)*
   - `esci` stoppa la musica e fa uscire il bot **(cancella la coda)**
-- ### Censura ❌🤫
-  - `censura <@utente>` aggiunge/toglie un utente dalla lista di censura **(solo per amministratori)**
-  - `lista_censura` stampa la lista di utenti censurati *(che non possono scrivere e parlare)* **(solo per amministratori)**
 - ### Info 💁📂
   - `userinfo <@utente>` stampa alcune informazioni su un utente particolare
   - `serverinfo` stampa alcune informazioni sul server discord
@@ -51,6 +48,5 @@
 - [x] Info
 - [ ] Loops ***(non ha molti usi al momento)***
 - [x] Musica
-- [ ] Censura ***(ha bisogno di un rewrite)***
 - [ ] Meteo
 - [ ] Image processing
