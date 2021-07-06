@@ -3,6 +3,7 @@ from discord import Member, VoiceChannel
 from discord.utils import get
 import random
 from asyncio import sleep
+from datetime import datetime, timedelta
 
 class Comandi(commands.Cog):
     def __init__(self, bot):
@@ -62,19 +63,27 @@ class Comandi(commands.Cog):
     @commands.command(name="cancella", aliases=["delete","canc"],help="Cancella # messaggi")
     @commands.has_permissions(manage_messages=True)
     async def cancella(self, ctx, amount : int, mode="messaggi"):
+        if amount < 1:
+            return await ctx.send("Inserisci un valore valido per la quantità di messaggi da eliminare")
+
         if (mode == "messaggi" or mode == "mess"):
             if (amount > 100):
-                await ctx.send("Oh ma sei impazzito? Non posso cancellare tutti quei messaggi")
+                return await ctx.send("Oh ma sei impazzito? Non posso cancellare tutti quei messaggi")
             else:    
                 await ctx.channel.purge(limit=int(amount)+1)
-        else:
-            if (mode == "minuti" or mode == "min"):
-                pass
-            elif (mode == "ore" or mode == "h"):
-                pass
-            if (mode == "giorni" or mode == "d"):
-                pass
 
+        elif (mode in ['minuto','minuti','min','ore','ora','h']):
+            amount = amount if mode in ['minuto','minuti','min'] else amount*60
+            if amount > 360: 
+                return await ctx.send(f"Oh ma sei impazzito? Non posso cancellare tutti quei messaggi")
+
+            data_comando = ctx.channel.last_message.created_at
+            differenza = timedelta(minutes=amount)
+            messaggi = await ctx.channel.history(after=(data_comando-differenza)).flatten()
+            await ctx.channel.delete_messages(messaggi)
+
+        else:
+            await ctx.send("Puoi cancellare gli ultimi # messaggi con:\n\t``` cancella # messaggi```\nOppure cancellare i messaggi inviati negli ultimi minuti/ore con:\n\t``` cancella 5 minuti  /  cancella 1 ora```")
 
 def setup(bot):
     bot.add_cog(Comandi(bot))
