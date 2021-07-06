@@ -18,7 +18,7 @@
   - `scorreggia` fai rischiare le mutande al bot 😬
   - `pinga <@utente> <quantità>` sveglia il tuo amico a suoni di ping
   - `raduna <#canale>` riunisci tutti i tuoi amici nella stessa chat vocale **(solo per amministratori)**
-  - `cancella <quantità>` cancella una certa quantità di messaggi **(solo per chi può cancellare messaggi)**
+  - `cancella <quantità> <modalità>` cancella una certa quantità di messaggi **(solo per chi può cancellare messaggi)**
   - `temperatura` se il bot gira su un raspberry stampa la temperatura della CPU **(solo per il proprietario del bot)**
 - #### Eventi 📆
   - il bot può rispondere a certi messaggi 😨 non sono molti ma piano piano aumentano
