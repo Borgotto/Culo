@@ -72,9 +72,11 @@ class Comandi(commands.Cog):
             else:    
                 await ctx.channel.purge(limit=int(amount)+1)
 
-        elif (mode in ['minuto','minuti','min','ore','ora','h']):
-            amount = amount if mode in ['minuto','minuti','min'] else amount*60
-            if amount > 360: 
+        elif (mode in ['minuto','minuti','min','m','ora','ore','h','o','giorno','giorni','g','d']):
+            if mode in ['ora','ore','h','o']: amount = amount * 60
+            if mode in ['giorno','giorni','g','d']: amount = amount * 1440
+
+            if amount > 4320: 
                 return await ctx.send(f"Oh ma sei impazzito? Non posso cancellare tutti quei messaggi")
 
             data_comando = ctx.channel.last_message.created_at
@@ -83,7 +85,7 @@ class Comandi(commands.Cog):
             await ctx.channel.delete_messages(messaggi)
 
         else:
-            await ctx.send("Puoi cancellare gli ultimi # messaggi con:\n\t``` cancella # messaggi```\nOppure cancellare i messaggi inviati negli ultimi minuti/ore con:\n\t``` cancella 5 minuti  /  cancella 1 ora```")
+            await ctx.send("Puoi cancellare gli ultimi # messaggi con:\n\t``` cancella # messaggi```\nOppure cancellare i messaggi inviati negli ultimi minuti/ore/giorni con:\n\t``` cancella 5 minuti  /  cancella 1 ora  /  cancella 2 giorni```")
 
 def setup(bot):
     bot.add_cog(Comandi(bot))
