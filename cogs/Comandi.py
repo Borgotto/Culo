@@ -2,7 +2,7 @@ from discord.ext import commands
 from discord import Embed, Member, VoiceChannel
 from datetime import datetime, timedelta
 from bs4 import BeautifulSoup, element
-import requests
+import requests, lxml
 
 #given parent 'div' it returns the concat. of its children's text
 #set 'href' to True if you want hrefs to be included in the string
