@@ -119,14 +119,10 @@ class Comandi(commands.Cog):
 
     @commands.command(name="wotd", aliases=["parola", "pdg", "word of the day", "parola del giorno"],help="Ti dice la parola del giorno")
     async def wotd(self, ctx, tutte=False):
-        print("wotd command")
         html = requests.get("https://www.urbandictionary.com/")
-        print("got html")
         soup = BeautifulSoup(html.content, "lxml")
-        print(soup.prettify())
         wotd_div = soup.find_all('div', class_='def-panel')
         wotd = get_wotd_from_div(wotd_div[0], True)
-        print(wotd)
         
         embed=Embed(title=wotd['day'].upper(), color=0xffffff)
         if wotd['gif'] is not None: embed.set_image(url=wotd['gif'])
