@@ -119,8 +119,9 @@ class Comandi(commands.Cog):
 
     @commands.command(name="wotd", aliases=["parola", "pdg", "word of the day", "parola del giorno"],help="Ti dice la parola del giorno")
     async def wotd(self, ctx, tutte=False):
-        print("wotd")
+        print("wotd command")
         html = requests.get("https://www.urbandictionary.com/")
+        print("got html")
         soup = BeautifulSoup(html.content, "lxml")
         print(soup.prettify())
         wotd_div = soup.find_all('div', class_='def-panel')
