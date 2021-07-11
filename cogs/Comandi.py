@@ -121,8 +121,10 @@ class Comandi(commands.Cog):
     async def wotd(self, ctx, tutte=False):
         html = requests.get("https://www.urbandictionary.com/")
         soup = BeautifulSoup(html.content, "lxml")
+        print(soup.prettify())
         wotd_div = soup.find_all('div', class_='def-panel')
         wotd = get_wotd_from_div(wotd_div[0], True)
+        print(wotd)
         
         embed=Embed(title=wotd['day'].upper(), color=0xffffff)
         if wotd['gif'] is not None: embed.set_image(url=wotd['gif'])
