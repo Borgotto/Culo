@@ -53,5 +53,5 @@
 - [x] Musica
 - [ ] Meteo
 - [ ] Image processing
-- [x] Urban Dictionary Word of the Day
-- [ ] Ubran Dictionary Word definition
+- [x] Urban Dictionary: Word of the Day
+- [ ] Ubran Dictionary: Word definition
