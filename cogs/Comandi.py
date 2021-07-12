@@ -10,19 +10,18 @@ def get_str_from_div(div, href=False, string=""):
     for content in div.contents:
         if type(content) is element.NavigableString:
             string += content
-        elif type(content) is element.Tag:
-            if content.name == 'a':
-                if href is True:
-                    string += '['+content.text+'](https://www.urbandictionary.com'+content.attrs['href']+')'
-                else:
-                    string += content.text
-            if content.name == 'br':
+        elif type(content) is element.Tag and content.name == 'a':
+            if href is True:
+                string += '['+content.text+'](https://www.urbandictionary.com'+content.attrs['href']+')'
+            else:
+                string += content.text
+        elif type(content) is element.Tag and content.name == 'br':
                 string += '\n'
     return string.replace("\r","")
 
 #given the WOTD div it returns Info on that Word Of The Day
-def get_wotd_from_div(div, href=False):
-    day = div.contents[0].text
+def get_word_from_div(div, href=False):
+    day = div.contents[0].text.upper()
     word = get_str_from_div(div.contents[1], href)
     meaning = get_str_from_div(div.contents[2], href)
     example = get_str_from_div(div.contents[3], href)
@@ -122,13 +121,13 @@ class Comandi(commands.Cog):
         html = requests.get("https://www.urbandictionary.com/")
         soup = BeautifulSoup(html.content, "lxml")
         wotd_div = soup.find_all('div', class_='def-panel')
-        wotd = get_wotd_from_div(wotd_div[0], True)
+        wotd = get_word_from_div(wotd_div[0], True)
         
-        embed=Embed(title=wotd['day'].upper(), color=0xffffff)
-        if wotd['gif'] is not None: embed.set_image(url=wotd['gif'])
+        embed=Embed(title=wotd['day'], color=0xffffff)
+        if wotd['gif']: embed.set_image(url=wotd['gif'])
         embed.add_field(name='Word:\n', value='***'+wotd['word']+'***', inline=False)
         embed.add_field(name='Meaning:\n', value='***'+wotd['meaning']+'***', inline=False)
-        embed.add_field(name='Example:', value='***'+wotd['meaning']+'***', inline=False)
+        embed.add_field(name='Example:', value='***'+wotd['example']+'***', inline=False)
         embed.set_footer(text='Definition '+wotd['contributor'])
         await ctx.send(embed=embed)
 
