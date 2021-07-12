@@ -18,7 +18,7 @@ def get_str_from_div(div, href=False, string=""):
                     string += content.text
             if content.name == 'br':
                 string += '\n'
-    return string
+    return string.replace("\r","")
 
 #given the WOTD div it returns Info on that Word Of The Day
 def get_wotd_from_div(div, href=False):
