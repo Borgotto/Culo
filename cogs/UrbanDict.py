@@ -35,6 +35,12 @@ def get_word_from_div(div, href=False):
 
 #given word it returns the embed ready to be sent
 def word_to_embed(word):
+    for key in word:
+        if len(word[key]) > 1023:
+            while len(word[key]) > 861:
+                word[key] = word[key].rsplit(' ', 2)[0]
+            word[key] += ' [...]\n[(open in the browser for the complete definition)]('+word['word'].split('(')[1].split(')')[0]+')'
+
     embed=Embed(title=word['day'], color=0xffffff)
     if word['gif']: embed.set_image(url=word['gif'])
     embed.add_field(name='Word:\n', value='***'+word['word']+'***', inline=False)
