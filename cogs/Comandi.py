@@ -1,42 +1,10 @@
 from discord.ext import commands
 from discord import Embed, Member, VoiceChannel
 from datetime import datetime, timedelta
-from bs4 import BeautifulSoup, element
-import requests, lxml
-
-#given parent 'div' it returns the concat. of its children's text
-#set 'href' to True if you want hrefs to be included in the string
-def get_str_from_div(div, href=False, string=""):
-    for content in div.contents:
-        if type(content) is element.NavigableString:
-            string += content
-        elif type(content) is element.Tag and content.name == 'a':
-            if href is True:
-                string += '['+content.text+'](https://www.urbandictionary.com'+content.attrs['href']+')'
-            else:
-                string += content.text
-        elif type(content) is element.Tag and content.name == 'br':
-                string += '\n'
-    return string.replace("\r","")
-
-#given the WOTD div it returns Info on that Word Of The Day
-def get_word_from_div(div, href=False):
-    day = div.contents[0].text.upper()
-    word = get_str_from_div(div.contents[1], href)
-    meaning = get_str_from_div(div.contents[2], href)
-    example = get_str_from_div(div.contents[3], href)
-    gif = contributor = None
-    try: #gif could be missing
-        gif = div.contents[4].contents[0].contents[0].attrs['src']
-        contributor = get_str_from_div(div.contents[5], href=False)
-    except AttributeError:
-        contributor = get_str_from_div(div.contents[4], href=False)
-    return {'day': day, 'word': word, 'meaning': meaning, 'example': example, 'gif': gif, 'contributor': contributor}
 
 class Comandi(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-
 
     @commands.Cog.listener()
     async def on_ready(self):        
@@ -114,22 +82,6 @@ class Comandi(commands.Cog):
 
         else:
             await ctx.send("Puoi cancellare gli ultimi # messaggi con:\n\t``` cancella # messaggi```\nOppure cancellare i messaggi inviati negli ultimi minuti/ore/giorni con:\n\t``` cancella 5 minuti  /  cancella 1 ora  /  cancella 2 giorni```")
-
-
-    @commands.command(name="wotd", aliases=["parola", "pdg", "word of the day", "parola del giorno"],help="Ti dice la parola del giorno")
-    async def wotd(self, ctx, tutte=False):
-        html = requests.get("https://www.urbandictionary.com/")
-        soup = BeautifulSoup(html.content, "lxml")
-        wotd_div = soup.find_all('div', class_='def-panel')
-        wotd = get_word_from_div(wotd_div[0], True)
-        
-        embed=Embed(title=wotd['day'], color=0xffffff)
-        if wotd['gif']: embed.set_image(url=wotd['gif'])
-        embed.add_field(name='Word:\n', value='***'+wotd['word']+'***', inline=False)
-        embed.add_field(name='Meaning:\n', value='***'+wotd['meaning']+'***', inline=False)
-        embed.add_field(name='Example:', value='***'+wotd['example']+'***', inline=False)
-        embed.set_footer(text='Definition '+wotd['contributor'])
-        await ctx.send(embed=embed)
 
 
 def setup(bot):

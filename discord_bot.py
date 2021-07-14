@@ -166,13 +166,20 @@ print()
 @bot.event
 async def on_command_error(ctx, error):
     if isinstance(error, commands.CommandNotFound):
-        await ctx.send(f'Comando sconosciuto :peach: :poop:')
+        return await ctx.send(f'Comando sconosciuto :peach: :poop:')
 
     if isinstance(error, commands.MissingPermissions):
-        await ctx.send(f'Non hai i permessi per usare questo comando...\nCosa pensavi di fare eh? :peach: :poop:')
+        return await ctx.send(f'Non hai i permessi per usare questo comando...\nCosa pensavi di fare eh? :peach: :poop:')
 
     if isinstance(error, commands.MissingRequiredArgument):
-        await ctx.send(f'Manca qualche argomento per usare questo comando...')
+        return await ctx.send(f'Manca qualche argomento per usare questo comando... :peach: :thinking:')
+
+    return await ctx.send("C'è stato un errore con il comando :peach: :weary:")
+
+@bot.command(help="Genera un errore")
+@commands.is_owner()
+async def errore(ctx):
+    raise commands.ArgumentParsingError
 
 
 
