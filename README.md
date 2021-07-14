@@ -8,6 +8,8 @@
 - [Discord.py Rewrite](https://discordpy.readthedocs.io/en/latest/)
 - [youtube_dl](https://youtube-dl.org/)
 - [ffmpeg](https://ffmpeg.org/download.html)
+- [BeautifulSoup 4.9+](https://www.crummy.com/software/BeautifulSoup/bs4/doc/#installing-beautiful-soup)
+- [lxml](https://lxml.de/installation.html)
 ##
 ### **Features:**
 - #### Prefisso del bot dinamico e modificabile server per server *(default:* 🍑 *)*
@@ -20,6 +22,7 @@
   - `raduna <#canale>` riunisci tutti i tuoi amici nella stessa chat vocale **(solo per amministratori)**
   - `cancella <quantità> <modalità>` cancella una certa quantità di messaggi **(solo per chi può cancellare messaggi)**
   - `temperatura` se il bot gira su un raspberry stampa la temperatura della CPU **(solo per il proprietario del bot)**
+  - `wotd` ti fa sapere qual è la parola del giorno secondo https://www.urbandictionary.com/
 - #### Eventi 📆
   - il bot può rispondere a certi messaggi 😨 non sono molti ma piano piano aumentano
   - prova a scrivere `bravo bot` 😉
@@ -50,3 +53,5 @@
 - [x] Musica
 - [ ] Meteo
 - [ ] Image processing
+- [x] Urban Dictionary: Word of the Day
+- [ ] Ubran Dictionary: Word definition
