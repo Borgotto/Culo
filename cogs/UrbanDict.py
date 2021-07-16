@@ -69,8 +69,8 @@ class UrbanDict(commands.Cog):
 
     @commands.command(name="wotd", aliases=["pdg"],help="Ti dice la parola del giorno")
     async def wotd(self, ctx):       
-        wotd_div = get_divs_from_url("https://www.urbandictionary.com/", limit=7)
-        wotd = get_word_from_div(wotd_div[2], True)
+        wotd_div = get_divs_from_url("https://www.urbandictionary.com/")
+        wotd = get_word_from_div(wotd_div, True)
         embed = word_to_embed(wotd)
         await ctx.send(embed=embed)
 
