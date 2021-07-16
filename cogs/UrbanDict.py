@@ -25,7 +25,7 @@ def get_word_from_div(div, href=False):
     word = get_str_from_div(div.contents[1], href)
     meaning = get_str_from_div(div.contents[2], href)
     example = get_str_from_div(div.contents[3], href)
-    gif = contributor = None
+    gif = contributor = ""
     try: #gif could be missing
         gif = div.contents[4].contents[0].contents[0].attrs['src']
         contributor = get_str_from_div(div.contents[5], href=False)
@@ -69,8 +69,8 @@ class UrbanDict(commands.Cog):
 
     @commands.command(name="wotd", aliases=["pdg"],help="Ti dice la parola del giorno")
     async def wotd(self, ctx):       
-        wotd_div = get_divs_from_url("https://www.urbandictionary.com/")
-        wotd = get_word_from_div(wotd_div, True)
+        wotd_div = get_divs_from_url("https://www.urbandictionary.com/", limit=7)
+        wotd = get_word_from_div(wotd_div[2], True)
         embed = word_to_embed(wotd)
         await ctx.send(embed=embed)
 
