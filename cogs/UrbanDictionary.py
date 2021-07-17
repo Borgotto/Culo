@@ -59,7 +59,7 @@ def get_divs_from_url(url, limit=1):
         wotd_div = soup.find_all('div', class_='def-panel')
         return wotd_div[:limit]
 
-class UrbanDict(commands.Cog):
+class UrbanDictionary(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
@@ -90,4 +90,4 @@ class UrbanDict(commands.Cog):
         await ctx.send(embed=embed)
 
 def setup(bot):
-    bot.add_cog(UrbanDict(bot))
+    bot.add_cog(UrbanDictionary(bot))
