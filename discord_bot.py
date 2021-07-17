@@ -49,8 +49,7 @@ except IOError:
     file = open('prefixes.json', 'w'); file.write("{}"); file.close()
 
 #set the bot prefix to an instance of the get_prefix function
-bot = commands.Bot(command_prefix = (get_prefix), owner_id=289887222310764545, intents=Intents.all())
-
+bot = commands.Bot(command_prefix = (get_prefix), owner_id=289887222310764545, intents=Intents.all(), strip_after_prefix=True)
 
 
 
@@ -91,7 +90,7 @@ async def on_guild_join(guild):
     with open('prefixes.json', 'r') as file: 
         prefixes = json.load(file) 
 
-    prefixes[str(guild.id)] = '🍑 ' #default prefix
+    prefixes[str(guild.id)] = '🍑' #default prefix
 
     with open('prefixes.json', 'w') as file: 
         json.dump(prefixes, file, indent=4) 
