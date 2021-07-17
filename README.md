@@ -22,7 +22,10 @@
   - `raduna <#canale>` riunisci tutti i tuoi amici nella stessa chat vocale **(solo per amministratori)**
   - `cancella <quantità> <modalità>` cancella una certa quantità di messaggi **(solo per chi può cancellare messaggi)**
   - `temperatura` se il bot gira su un raspberry stampa la temperatura della CPU **(solo per il proprietario del bot)**
-  - `wotd` ti fa sapere qual è la parola del giorno secondo https://www.urbandictionary.com/
+- #### Urban Dictionary 📚
+  - `wotd` ti fa sapere qual è la parola del giorno 📜
+  - `parola_random` ti da la definizione di una parola totalmente a caso 🤣
+  - `definisci <parola>` ti da la definizione della parola/frase passata
 - #### Eventi 📆
   - il bot può rispondere a certi messaggi 😨 non sono molti ma piano piano aumentano
   - prova a scrivere `bravo bot` 😉
@@ -54,4 +57,4 @@
 - [ ] Meteo
 - [ ] Image processing
 - [x] Urban Dictionary: Word of the Day
-- [ ] Ubran Dictionary: Word definition
+- [x] Ubran Dictionary: Word definition
