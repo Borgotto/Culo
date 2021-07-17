@@ -73,6 +73,7 @@ class UrbanDict(commands.Cog):
         wotd = get_word_from_div(wotd_div, True)
         embed = word_to_embed(wotd)
         await ctx.send(embed=embed)
+        await ctx.message.delete()
 
     @commands.command(name="definisci", aliases=["define", "definition", "definizione"],help="Ti dice la definizione delle parole inserite")
     async def definisci(self, ctx, *query):
