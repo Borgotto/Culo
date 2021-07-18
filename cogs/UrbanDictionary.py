@@ -10,7 +10,7 @@ def get_str_from_div(div, href=False, string=""):
     for content in div.contents:
         if type(content) is element.NavigableString:
             string += content
-        elif type(content) is element.Tag and content.name == 'a':
+        elif type(content) is element.Tag and content.name == 'a' and 'href' in content.attrs:
             if href is True:
                 string += '['+content.text+'](https://www.urbandictionary.com'+content.attrs['href']+')'
             else:
@@ -77,13 +77,15 @@ class UrbanDictionary(commands.Cog):
 
     @commands.command(name="definisci", aliases=["define", "definition", "definizione"],help="Ti dice la definizione delle parole inserite")
     async def definisci(self, ctx, *query):
-        word_div = get_divs_from_url('https://www.urbandictionary.com/define.php?term=' + " ".join(query))
+        query = " ".join(query)
+        word_div = get_divs_from_url('https://www.urbandictionary.com/define.php?term=' + query)
+        if word_div is None: return await ctx.send("¯\_(ツ)_/¯\nSorry, we couldn't find the definition of: `"+ query +"`")
         word = get_word_from_div(word_div, True)
         embed = word_to_embed(word)
         await ctx.send(embed=embed)
 
     @commands.command(name="parola_random", aliases=["rand_parola", "rand_word", "parola", "word"],help="Ti dice la definizione di una parola a caso")
-    async def rand_word(self, ctx,):   
+    async def rand_word(self, ctx):   
         word_div = get_divs_from_url('https://www.urbandictionary.com/random.php?page=' + str(randint(2, 999)), limit=7)
         word = get_word_from_div(word_div[randint(0, 6)], True)
         embed = word_to_embed(word)
