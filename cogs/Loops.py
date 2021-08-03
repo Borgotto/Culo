@@ -25,9 +25,13 @@ class Loops(commands.Cog):
     #invia in #word-of-the-day ( <#863166266554318898> ) la wotd ogni giorno a mezzanotte
     @tasks.loop(hours=24)
     async def wotd(self):
-        canale_wotd = self.bot.get_channel(863166266554318898)
+        canali_wotd = []
+        canali_wotd.append(self.bot.get_channel(863166266554318898))
+        canali_wotd.append(self.bot.get_channel(810291905056604211))
+
         urban_dictionary_cog = self.bot.get_cog("UrbanDictionary")
-        await urban_dictionary_cog.wotd(canale_wotd)
+        for canale in canali_wotd:
+            await urban_dictionary_cog.wotd(canale)
 
 
 def setup(bot):
