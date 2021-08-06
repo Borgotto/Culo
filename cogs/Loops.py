@@ -12,7 +12,6 @@ class Loops(commands.Cog):
     @commands.Cog.listener()
     async def on_ready(self):
         self.fabio.start()
-        self.wotd.start()
         print("Loop caricati!")
 
     #Loop per rinominare Fabio.exe ( id = 192261771380260864 )
@@ -21,17 +20,6 @@ class Loops(commands.Cog):
         fabio = get(self.bot.get_all_members(), id=192261771380260864)
 
         await fabio.edit(nick=fabio.display_name.split(".")[0]+'.'+random.choice(self.estensioni))
-
-    #invia in #word-of-the-day ( <#863166266554318898> ) la wotd ogni giorno a mezzanotte
-    @tasks.loop(hours=24)
-    async def wotd(self):
-        canali_wotd = []
-        canali_wotd.append(self.bot.get_channel(863166266554318898))
-        canali_wotd.append(self.bot.get_channel(810291905056604211))
-
-        urban_dictionary_cog = self.bot.get_cog("UrbanDictionary")
-        for canale in canali_wotd:
-            await urban_dictionary_cog.wotd(canale)
 
 
 def setup(bot):
