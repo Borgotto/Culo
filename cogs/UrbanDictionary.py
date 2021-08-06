@@ -1,4 +1,4 @@
-from discord.ext import commands
+from discord.ext import commands, tasks
 from discord import Embed, Member, VoiceChannel
 from bs4 import BeautifulSoup, element
 import requests, lxml
@@ -65,7 +65,16 @@ class UrbanDictionary(commands.Cog):
 
     @commands.Cog.listener()
     async def on_ready(self):
+        self.wotd_loop.start()
         print("Urban Dictionary caricato!")
+
+    #invia la wotd ogni giorno in canali specifici
+    @tasks.loop(hours=24)
+    async def wotd_loop(self):
+        id_canali_wotd = [863166266554318898, 810291905056604211]
+
+        for id in id_canali_wotd:
+            await self.wotd(self.bot.get_channel(id))
 
     @commands.command(name="wotd", aliases=["pdg"],help="Ti dice la parola del giorno")
     async def wotd(self, ctx):       
