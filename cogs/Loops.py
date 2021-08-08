@@ -18,7 +18,7 @@ class Loops(commands.Cog):
         estensioni = ["ciruzzo","napoli","struzzo","discord","vodkaredbull","sburrino","carry","fbi","alifana","azz","storto","doblo'","arrosto","cozze","sfiga","polentone","dove","7z","aac","apk","appx","arc","ass","bin","c","xaml","deb","dn","egg","exe","gbp","gbs","gif","gzip","html","jpg","jar","oar","osz","pak","php","pyk","py","pyw","rar","sb","tar","uha","viv","zip","iso","img","cad","dwg","gba","std","js","css","psd","ans","asc","doc","docx","log","pdf","xml","xhtml","xps","ico","bmp","jpeg","png","sym","url","os","dos","root","bat","cpp","c#","lua","obj","wav","mpeg","avi","flv","ogg","webm","nds","3ds","cia","cur","bak","raw","borgo",""]
         fabio = get(self.bot.get_all_members(), id=192261771380260864)
 
-        await fabio.edit(nick=fabio.display_name.split(".")[0]+'.'+random.choice(self.estensioni))
+        await fabio.edit(nick=fabio.display_name.split(".")[0]+'.'+random.choice(estensioni))
 
 
 def setup(bot):
