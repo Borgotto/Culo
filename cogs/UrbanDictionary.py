@@ -82,8 +82,6 @@ class UrbanDictionary(commands.Cog):
         wotd = get_word_from_div(wotd_div, True)
         embed = word_to_embed(wotd)
         await ctx.send(embed=embed)
-        try: await ctx.message.delete() 
-        except AttributeError: pass
 
     @commands.command(name="definisci", aliases=["define", "definition", "definizione"],help="Ti dice la definizione delle parole inserite")
     async def definisci(self, ctx, *query):
