@@ -173,7 +173,7 @@ async def on_command_error(ctx, error):
     if isinstance(error, commands.MissingRequiredArgument):
         return await ctx.send(f'Manca qualche argomento per usare questo comando... :peach: :thinking:')
 
-    return await ctx.send("C'è stato un errore con il comando :peach: :weary:")
+    return await ctx.send("C'è stato un errore con il comando, hai inserito i giusti parametri? :peach: :weary:")
 
 @bot.command(help="Genera un errore")
 @commands.is_owner()
