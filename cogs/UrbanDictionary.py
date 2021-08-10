@@ -132,6 +132,11 @@ class UrbanDictionary(commands.Cog):
         except KeyError:
             await ctx.send(f'The channel for the WOTD is not set') 
 
+    @commands.command(name="restart_wotd_loop",help="Restart the WOTD Task")
+    @commands.is_owner()
+    async def restart_wotd_loop(self, ctx):
+        self.wotd_loop.restart()
+
 
     ############################
     #    urbandict commands    #
