@@ -1,8 +1,13 @@
 from discord.ext import commands, tasks
-from discord import Embed, Member, VoiceChannel
+from discord import Embed
 from bs4 import BeautifulSoup, element
 import requests, lxml
 from random import randint
+import json
+
+#############################
+#    auxiliary functions    #
+#############################
 
 #given parent 'div' it returns the concat. of its children's text
 #set 'href' to True if you want hrefs to be included in the string
@@ -25,12 +30,14 @@ def get_word_from_div(div, href=False):
     word = get_str_from_div(div.contents[1], href)
     meaning = get_str_from_div(div.contents[2], href)
     example = get_str_from_div(div.contents[3], href)
+
     gif = contributor = ""
-    try: #gif could be missing
+    if div.contents[4].attrs['class'][0] == 'gif':
         gif = div.contents[4].contents[0].contents[0].attrs['src']
         contributor = get_str_from_div(div.contents[5], href=False)
-    except AttributeError:
+    elif div.contents[4].attrs['class'][0] == 'contributor':
         contributor = get_str_from_div(div.contents[4], href=False)
+
     return {'day': day, 'word': word, 'meaning': meaning, 'example': example, 'gif': gif, 'contributor': contributor}
 
 #given word it returns the embed ready to be sent
@@ -59,23 +66,76 @@ def get_divs_from_url(url, limit=1):
         wotd_div = soup.find_all('div', class_='def-panel')
         return wotd_div[:limit]
 
+
+
+###################
+#    cog class    #
+###################
+
 class UrbanDictionary(commands.Cog):
     def __init__(self, bot):
-        self.bot = bot
+        self.bot = bot        
+        try:
+            file = open('wotd_channels.json', 'r'); file.close()
+        except IOError:
+            file = open('wotd_channels.json', 'w'); file.write("{}"); file.close()
 
     @commands.Cog.listener()
     async def on_ready(self):
         self.wotd_loop.start()
         print("Urban Dictionary caricato!")
 
-    #invia la wotd ogni giorno in canali specifici
+
+    ###################
+    #    wotd loop    #
+    ###################
+    #sends the wotd every day in the channels 
     @tasks.loop(hours=24)
     async def wotd_loop(self):
-        id_canali_wotd = [863166266554318898, 810291905056604211]
+        with open('wotd_channels.json', 'r') as file:
+            channel_ids = json.load(file)
 
-        for id in id_canali_wotd:
-            await self.wotd(self.bot.get_channel(id))
+        for id in channel_ids.values():       
+            channel = self.bot.get_channel(id)
+            if channel is not None: await self.wotd(channel)
 
+
+    ####################
+    #    loop setup    #
+    ####################
+    @commands.command(name="set_wotd_channel",help="Pass the channel you want the WOTD to be sent every day")
+    @commands.has_permissions(administrator=True) 
+    async def set_wotd_channel(self, ctx, channel):
+        if self.bot.get_channel(int(channel[2:-1])) is None:
+            return await ctx.send(f"Channel passed is not valid or it's hidden from the bot") 
+            
+        with open('wotd_channels.json', 'r') as file:
+            channel_ids = json.load(file)
+
+        channel_ids[str(ctx.guild.id)] = int(channel[2:-1])
+
+        with open('wotd_channels.json', 'w') as file: 
+            json.dump(channel_ids, file, indent=4)
+
+        await ctx.send(f'Channel set to: <#{channel[2:-1]}>') 
+
+    @commands.command(name="remove_wotd_channel",help="Unset the channel for the WOTD")
+    @commands.has_permissions(administrator=True) 
+    async def remove_wotd_channel(self, ctx):
+        with open('wotd_channels.json', 'r') as file:
+            channel_ids = json.load(file)
+        try:
+            channel_ids.pop(str(ctx.guild.id)) 
+            with open('wotd_channels.json', 'w') as file: 
+                json.dump(channel_ids, file, indent=4)
+            await ctx.send(f'Channel unset') 
+        except KeyError:
+            await ctx.send(f'The channel for the WOTD is not set') 
+
+
+    ############################
+    #    urbandict commands    #
+    ############################
     @commands.command(name="wotd", aliases=["pdg"],help="Ti dice la parola del giorno")
     async def wotd(self, ctx):       
         wotd_div = get_divs_from_url("https://www.urbandictionary.com/")
@@ -98,6 +158,7 @@ class UrbanDictionary(commands.Cog):
         word = get_word_from_div(word_div[randint(0, 6)], True)
         embed = word_to_embed(word)
         await ctx.send(embed=embed)
+
 
 def setup(bot):
     bot.add_cog(UrbanDictionary(bot))
