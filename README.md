@@ -26,11 +26,9 @@
   - `wotd` ti fa sapere qual è la parola del giorno 📜
   - `parola_random` ti da la definizione di una parola totalmente a caso 🤣
   - `definisci <parola>` ti da la definizione della parola/frase passata
-- #### Eventi 📆
-  - il bot può rispondere a certi messaggi 😨 non sono molti ma piano piano aumentano
-  - prova a scrivere `bravo bot` 😉
-- #### Loops ⌚🔄
-  - Ogni tot minuti il bot esegue qualche comando ⏰
+  - `set_wotd_channel <canale>` imposta il canale dove la pdg verrà inviata automaticamente **(solo per amministratori)**
+  - `remove_wotd_channel` rimuove il canale dalla pdg automatica **(solo per amministratori)**
+  - `restart_wotd_loop` riavvia il ciclo della parola del giorno **(solo per il proprietario del bot)**
 - #### Musica 🎼🎵🎶
   - `connetti` per far entrare il bot nel canale vocale in cui ti trovi
   - `play <canzone>` per riprodurre una canzone
@@ -45,6 +43,11 @@
   - `userinfo <@utente>` stampa alcune informazioni su un utente particolare
   - `serverinfo` stampa alcune informazioni sul server discord
   - `lista_server` stampa la lista di server in cui si trova il bot **(solo per il proprietario del bot)**
+- #### Eventi 📆
+  - il bot può rispondere a certi messaggi 😨 non sono molti ma piano piano aumentano
+  - prova a scrivere `bravo bot` 😉
+- #### Loops ⌚🔄
+  - Ogni tot minuti il bot esegue qualche comando ⏰
 ##
 ### To-Do List
 #### Cose da aggiungere al bot:
