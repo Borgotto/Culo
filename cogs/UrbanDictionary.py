@@ -78,7 +78,7 @@ class UrbanDictionary(commands.Cog):
         try:
             file = open('config/wotd_settings.json', 'r'); file.close()
         except IOError:
-            file = open('config/wotd_settings.json', 'w'); file.write('{ "last_wotd_day": "", "channel_ids": {}}'); file.close()
+            file = open('config/wotd_settings.json', 'w'); file.write('{\n\t"last_wotd_day": "",\n\t"channel_ids": {\n\t}\n}'); file.close()
 
     @commands.Cog.listener()
     async def on_ready(self):
