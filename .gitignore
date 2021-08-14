@@ -5,4 +5,5 @@ cogs/__pycache__/
 .vscode/launch.json
 wotd_settings.json
 prefixes.json
-config/
+config/wotd_settings.json
+config/prefixes.json
