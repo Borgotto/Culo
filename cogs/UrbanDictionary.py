@@ -119,12 +119,12 @@ class UrbanDictionary(commands.Cog):
             return await ctx.send(f"Channel passed is not valid or it's hidden from the bot") 
             
         with open('wotd_settings.json', 'r') as file:
-            channel_ids = json.load(file)
+            wotd_settings = json.load(file)
 
-        channel_ids[str(ctx.guild.id)] = int(channel[2:-1])
+        wotd_settings["channel_ids"][str(ctx.guild.id)] = int(channel[2:-1])
 
         with open('wotd_settings.json', 'w') as file: 
-            json.dump(channel_ids, file, indent=4)
+            json.dump(wotd_settings, file, indent=4)
 
         await ctx.send(f'Channel set to: <#{channel[2:-1]}>') 
 
@@ -132,11 +132,11 @@ class UrbanDictionary(commands.Cog):
     @commands.has_permissions(administrator=True) 
     async def remove_wotd_channel(self, ctx):
         with open('wotd_settings.json', 'r') as file:
-            channel_ids = json.load(file)
+            wotd_settings = json.load(file)
         try:
-            channel_ids.pop(str(ctx.guild.id)) 
+            wotd_settings["channel_ids"].pop(str(ctx.guild.id)) 
             with open('wotd_settings.json', 'w') as file: 
-                json.dump(channel_ids, file, indent=4)
+                json.dump(wotd_settings, file, indent=4)
             await ctx.send(f'Channel unset') 
         except KeyError:
             await ctx.send(f'The channel for the WOTD is not set') 
