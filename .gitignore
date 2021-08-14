@@ -3,3 +3,6 @@ kick_user.pyw
 __pycache__/
 cogs/__pycache__/
 .vscode/launch.json
+wotd_settings.json
+prefixes.json
+config/

@@ -76,9 +76,9 @@ class UrbanDictionary(commands.Cog):
     def __init__(self, bot):
         self.bot = bot        
         try:
-            file = open('wotd_settings.json', 'r'); file.close()
+            file = open('config/wotd_settings.json', 'r'); file.close()
         except IOError:
-            file = open('wotd_settings.json', 'w'); file.write('{ "wotd_day": "", }'); file.close()
+            file = open('config/wotd_settings.json', 'w'); file.write('{ "last_wotd_day": "", "channel_ids": {}}'); file.close()
 
     @commands.Cog.listener()
     async def on_ready(self):
@@ -95,12 +95,12 @@ class UrbanDictionary(commands.Cog):
         wotd_div = get_divs_from_url("https://www.urbandictionary.com/")
         wotd = get_word_from_div(wotd_div, True)
 
-        with open('wotd_settings.json', 'r') as file:
+        with open('config/wotd_settings.json', 'r') as file:
             wotd_settings = json.load(file)
 
         if wotd_settings["last_wotd_day"] != wotd["day"]:
             wotd_settings["last_wotd_day"] = wotd["day"]
-            with open('wotd_settings.json', 'w') as file:
+            with open('config/wotd_settings.json', 'w') as file:
                 json.dump(wotd_settings, file, indent=4) 
 
             embed = word_to_embed(wotd)
@@ -118,12 +118,12 @@ class UrbanDictionary(commands.Cog):
         if self.bot.get_channel(int(channel[2:-1])) is None:
             return await ctx.send(f"Channel passed is not valid or it's hidden from the bot") 
             
-        with open('wotd_settings.json', 'r') as file:
+        with open('config/wotd_settings.json', 'r') as file:
             wotd_settings = json.load(file)
 
         wotd_settings["channel_ids"][str(ctx.guild.id)] = int(channel[2:-1])
 
-        with open('wotd_settings.json', 'w') as file: 
+        with open('config/wotd_settings.json', 'w') as file: 
             json.dump(wotd_settings, file, indent=4)
 
         await ctx.send(f'Channel set to: <#{channel[2:-1]}>') 
@@ -131,11 +131,11 @@ class UrbanDictionary(commands.Cog):
     @commands.command(name="remove_wotd_channel",help="Unset the channel for the WOTD")
     @commands.has_permissions(administrator=True) 
     async def remove_wotd_channel(self, ctx):
-        with open('wotd_settings.json', 'r') as file:
+        with open('config/wotd_settings.json', 'r') as file:
             wotd_settings = json.load(file)
         try:
             wotd_settings["channel_ids"].pop(str(ctx.guild.id)) 
-            with open('wotd_settings.json', 'w') as file: 
+            with open('config/wotd_settings.json', 'w') as file: 
                 json.dump(wotd_settings, file, indent=4)
             await ctx.send(f'Channel unset') 
         except KeyError:
@@ -152,8 +152,8 @@ class UrbanDictionary(commands.Cog):
     ############################
     @commands.command(name="wotd", aliases=["pdg"],help="Ti dice la parola del giorno")
     async def wotd(self, ctx):       
-        wotd_div = get_divs_from_url("https://www.urbandictionary.com/")
-        wotd = get_word_from_div(wotd_div, True)
+        wotd_div = get_divs_from_url("https://www.urbandictionary.com/", limit=7)
+        wotd = get_word_from_div(wotd_div[0], True)
         embed = word_to_embed(wotd)
         await ctx.send(embed=embed)
 

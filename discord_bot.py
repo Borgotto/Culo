@@ -22,13 +22,13 @@ def get_token():
 
 #function that returns the bot prefix by the guild id
 def get_prefix(client, message):
-    with open('prefixes.json', 'r') as file:
+    with open('config/prefixes.json', 'r') as file:
         prefixes = json.load(file)
     return prefixes[str(message.guild.id)]  
 
 #updates prefixes.json with the right prefixes, deleting unnecessary ones and adding missing ones
 def update_prefixes():
-    with open('prefixes.json', 'r') as file: 
+    with open('config/prefixes.json', 'r') as file: 
         prefixes = json.load(file)     
     
         updated_prefixes = { }
@@ -39,14 +39,14 @@ def update_prefixes():
             except KeyError:
                 updated_prefixes[str(guild.id)] = '🍑 '
 
-    with open('prefixes.json', 'w') as file: 
+    with open('config/prefixes.json', 'w') as file: 
         json.dump(updated_prefixes, file, indent=4)
 
 #create the prefixes.json file if it doesn't exist
 try:
-    file = open('prefixes.json', 'r'); file.close()
+    file = open('config/prefixes.json', 'r'); file.close()
 except IOError:
-    file = open('prefixes.json', 'w'); file.write("{}"); file.close()
+    file = open('config/prefixes.json', 'w'); file.write("{}"); file.close()
 
 #set the bot prefix to an instance of the get_prefix function
 bot = commands.Bot(command_prefix = (get_prefix), owner_id=289887222310764545, intents=Intents.all(), strip_after_prefix=True)
@@ -71,7 +71,7 @@ async def on_ready():
     print ("Discord Version:", discord.__version__)
     print ("\n--------------------------------\n")
     #print servers info    
-    with open('prefixes.json', 'r') as file: 
+    with open('config/prefixes.json', 'r') as file: 
         prefixes = json.load(file) 
         print(f'The bot is in {len(bot.guilds)} servers!')
         print("List of all servers the bot is in:", end="\n\n")
@@ -87,12 +87,12 @@ async def on_ready():
 #########################
 @bot.event
 async def on_guild_join(guild): 
-    with open('prefixes.json', 'r') as file: 
+    with open('config/prefixes.json', 'r') as file: 
         prefixes = json.load(file) 
 
     prefixes[str(guild.id)] = '🍑' #default prefix
 
-    with open('prefixes.json', 'w') as file: 
+    with open('config/prefixes.json', 'w') as file: 
         json.dump(prefixes, file, indent=4) 
     
     #updates to bot presence
@@ -100,12 +100,12 @@ async def on_guild_join(guild):
 
 @bot.event
 async def on_guild_remove(guild): 
-    with open('prefixes.json', 'r') as file: 
+    with open('config/prefixes.json', 'r') as file: 
         prefixes = json.load(file)
 
     prefixes.pop(str(guild.id)) 
 
-    with open('prefixes.json', 'w') as file:
+    with open('config/prefixes.json', 'w') as file:
         json.dump(prefixes, file, indent=4)
 
     #updates to bot presence
@@ -114,12 +114,12 @@ async def on_guild_remove(guild):
 @bot.command(name="cambia_prefisso", aliases=["prefisso"], help="Cambia il prefisso per i comandi del bot")
 @commands.has_permissions(administrator=True) 
 async def cambia_prefisso(ctx, prefisso : str): 
-    with open('prefixes.json', 'r') as file:
+    with open('config/prefixes.json', 'r') as file:
         prefixes = json.load(file)
 
     prefixes[str(ctx.guild.id)] = prefisso
 
-    with open('prefixes.json', 'w') as file: 
+    with open('config/prefixes.json', 'w') as file: 
         json.dump(prefixes, file, indent=4)
 
     await ctx.send(f'Prefisso cambiato a: {prefisso}') 
