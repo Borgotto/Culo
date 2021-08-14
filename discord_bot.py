@@ -42,6 +42,10 @@ def update_prefixes():
     with open('config/prefixes.json', 'w') as file: 
         json.dump(updated_prefixes, file, indent=4)
 
+#create config folder if it doesn't exist
+if not os.path.exists('./config/'):
+    os.makedirs('./config/')
+
 #create the prefixes.json file if it doesn't exist
 try:
     file = open('config/prefixes.json', 'r'); file.close()
