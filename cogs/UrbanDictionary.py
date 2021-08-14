@@ -98,7 +98,7 @@ class UrbanDictionary(commands.Cog):
         with open('config/wotd_settings.json', 'r') as file:
             wotd_settings = json.load(file)
 
-        if wotd_settings["last_wotd_day"] != wotd["day"]:
+        if wotd_settings["last_wotd_day"] != wotd["day"] and len(wotd_settings["channel_ids"]) > 0:
             wotd_settings["last_wotd_day"] = wotd["day"]
             with open('config/wotd_settings.json', 'w') as file:
                 json.dump(wotd_settings, file, indent=4) 
