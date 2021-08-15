@@ -1,4 +1,5 @@
 from discord.ext import commands, tasks
+from discord.utils import escape_markdown
 from discord import Embed
 from bs4 import BeautifulSoup, element
 import requests, lxml
@@ -14,14 +15,14 @@ import json
 def get_str_from_div(div, href=False, string=""):
     for content in div.contents:
         if type(content) is element.NavigableString:
-            string += content
+            string += escape_markdown(content)
         elif type(content) is element.Tag and content.name == 'a' and 'href' in content.attrs:
             if href is True:
-                string += '['+content.text+'](https://www.urbandictionary.com'+content.attrs['href']+')'
+                string += '['+escape_markdown(content.text)+'](https://www.urbandictionary.com'+content.attrs['href']+')'
             else:
-                string += content.text
+                string += escape_markdown(content.text)
         elif type(content) is element.Tag and content.name == 'br':
-                string += '\n'
+            string += '\n'
     return string.replace("\r","")
 
 #given the WOTD div it returns Info on that Word Of The Day
