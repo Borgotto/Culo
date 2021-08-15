@@ -50,9 +50,9 @@ def word_to_embed(word):
 
     embed=Embed(title=word['day'], color=0xffffff)
     if word['gif']: embed.set_image(url=word['gif'])
-    embed.add_field(name='Word:\n', value='***'+word['word']+'***', inline=False)
-    embed.add_field(name='Meaning:\n', value='***'+word['meaning']+'***', inline=False)
-    embed.add_field(name='Example:', value='***'+word['example']+'***', inline=False)
+    embed.add_field(name='Word:\n', value='**'+word['word']+'**', inline=False)
+    embed.add_field(name='Meaning:\n', value='**'+word['meaning']+'**', inline=False)
+    embed.add_field(name='Example:', value='**'+word['example']+'**', inline=False)
     embed.set_footer(text='Definition '+word['contributor'])
     return embed
 
