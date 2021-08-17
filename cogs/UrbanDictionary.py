@@ -20,7 +20,7 @@ def get_str_from_div(div, href=False, string=""):
             if href is True:
                 string += '['+escape_markdown(content.text)+'](https://www.urbandictionary.com'+content.attrs['href']+')'
             else:
-                string += escape_markdown(content.text)
+                string += content.text
         elif type(content) is element.Tag and content.name == 'br':
             string += '\n'
     return string.replace("\r","")
