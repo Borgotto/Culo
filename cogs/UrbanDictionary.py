@@ -91,7 +91,7 @@ class UrbanDictionary(commands.Cog):
     #    wotd loop    #
     ###################
     #sends the wotd every day in the channels 
-    @tasks.loop(minutes=9)
+    @tasks.loop(minutes=19)
     async def wotd_loop(self):
         wotd_div = get_divs_from_url("https://www.urbandictionary.com/")
         wotd = get_word_from_div(wotd_div, True)
