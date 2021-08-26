@@ -93,21 +93,27 @@ class UrbanDictionary(commands.Cog):
     #sends the wotd every day in the channels 
     @tasks.loop(minutes=19)
     async def wotd_loop(self):
-        wotd_div = get_divs_from_url("https://www.urbandictionary.com/")
-        wotd = get_word_from_div(wotd_div, True)
-
         with open('config/wotd_settings.json', 'r') as file:
             wotd_settings = json.load(file)
+            if wotd_settings["last_wotd_day"] != "": limit = 7
+            else: limit = 1
 
-        if wotd_settings["last_wotd_day"] != wotd["day"] and len(wotd_settings["channel_ids"]) > 0:
-            wotd_settings["last_wotd_day"] = wotd["day"]
+        words_to_send = []
+        wotd_divs = get_divs_from_url("https://www.urbandictionary.com/", limit=7)
+        for div in wotd_divs[:limit]:
+            if div.contents[0].text.upper() != wotd_settings["last_wotd_day"]:
+                words_to_send.append(get_word_from_div(div, href=True))
+            else: break
+
+        if len(words_to_send) > 0:
+            wotd_settings["last_wotd_day"] = words_to_send[0]['day']
             with open('config/wotd_settings.json', 'w') as file:
                 json.dump(wotd_settings, file, indent=4) 
-
-            embed = word_to_embed(wotd)
-            for id in wotd_settings["channel_ids"].values():       
-                channel = self.bot.get_channel(id)
-                if channel is not None: await channel.send(embed=embed)
+            for wotd in reversed(words_to_send):
+                embed = word_to_embed(wotd)
+                for id in wotd_settings["channel_ids"].values():       
+                    channel = self.bot.get_channel(id)
+                    if channel is not None: await channel.send(embed=embed)
 
 
     ####################
@@ -152,9 +158,11 @@ class UrbanDictionary(commands.Cog):
     #    urbandict commands    #
     ############################
     @commands.command(name="wotd", aliases=["pdg"],help="Ti dice la parola del giorno")
-    async def wotd(self, ctx):       
-        wotd_div = get_divs_from_url("https://www.urbandictionary.com/", limit=7)
-        wotd = get_word_from_div(wotd_div[0], True)
+    async def wotd(self, ctx, day:int=0):  
+        if day not in range(0,7): 
+            return await ctx.send("You can only get a WOTD not older than 6 days")
+        wotd_div = get_divs_from_url("https://www.urbandictionary.com/", limit=(day+1))
+        wotd = get_word_from_div(wotd_div[day], True)
         embed = word_to_embed(wotd)
         await ctx.send(embed=embed)
 
