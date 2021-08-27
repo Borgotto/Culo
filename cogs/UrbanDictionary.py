@@ -161,7 +161,8 @@ class UrbanDictionary(commands.Cog):
     async def wotd(self, ctx, day:int=0):  
         if day not in range(0,7): 
             return await ctx.send("You can only get a WOTD not older than 6 days")
-        wotd_div = get_divs_from_url("https://www.urbandictionary.com/", limit=(day+1))
+        wotd_div = []
+        wotd_div.append(get_divs_from_url("https://www.urbandictionary.com/", limit=(day+1)))
         wotd = get_word_from_div(wotd_div[day], True)
         embed = word_to_embed(wotd)
         await ctx.send(embed=embed)
