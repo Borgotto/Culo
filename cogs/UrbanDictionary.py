@@ -2,7 +2,9 @@ from discord.ext import commands, tasks
 from discord.utils import escape_markdown
 from discord import Embed
 from bs4 import BeautifulSoup, element
-import requests, lxml
+from requests import get as get_html
+from urllib.parse import quote
+import lxml
 from random import randint
 import json
 
@@ -59,7 +61,7 @@ def word_to_embed(word):
 
 #given the urban dictionary url it returns the words on that page
 def get_divs_from_url(url, limit=1):
-    html = requests.get(url)
+    html = get_html(url)
     soup = BeautifulSoup(html.content, "lxml")
     if limit == 1:
         return soup.find('div', class_='def-panel')
@@ -72,7 +74,6 @@ def get_divs_from_url(url, limit=1):
 ###################
 #    cog class    #
 ###################
-
 class UrbanDictionary(commands.Cog):
     def __init__(self, bot):
         self.bot = bot        
@@ -90,8 +91,8 @@ class UrbanDictionary(commands.Cog):
     ###################
     #    wotd loop    #
     ###################
-    #sends the wotd every day in the channels 
-    @tasks.loop(minutes=19)
+    #sends the wotd every day in the channels from wotd_settings.json
+    @tasks.loop(minutes=9)
     async def wotd_loop(self):
         with open('config/wotd_settings.json', 'r') as file:
             wotd_settings = json.load(file)
@@ -114,6 +115,7 @@ class UrbanDictionary(commands.Cog):
                 for id in wotd_settings["channel_ids"].values():       
                     channel = self.bot.get_channel(id)
                     if channel is not None: await channel.send(embed=embed)
+
 
 
     ####################
@@ -154,13 +156,14 @@ class UrbanDictionary(commands.Cog):
         self.wotd_loop.restart()
 
 
+
     ############################
     #    urbandict commands    #
     ############################
     @commands.command(name="wotd", aliases=["pdg"],help="Ti dice la parola del giorno")
     async def wotd(self, ctx, day:int=0):  
         if day not in range(0,7): 
-            return await ctx.send("You can only get a WOTD not older than 6 days")
+            return await ctx.send("Puoi richiedere una wotd non più vecchia di 6 giorni!")
         wotd_div = []
         wotd_div.append(get_divs_from_url("https://www.urbandictionary.com/", limit=(day+1)))
         wotd = get_word_from_div(wotd_div[day], True)
@@ -170,7 +173,8 @@ class UrbanDictionary(commands.Cog):
     @commands.command(name="definisci", aliases=["define", "definition", "definizione"],help="Ti dice la definizione delle parole inserite")
     async def definisci(self, ctx, *query):
         query = " ".join(query)
-        word_div = get_divs_from_url('https://www.urbandictionary.com/define.php?term=' + query)
+        encodedURL = 'https://www.urbandictionary.com/define.php?term=' + quote(query)
+        word_div = get_divs_from_url(encodedURL)
         if word_div is None: return await ctx.send("¯\_(ツ)_/¯\nSorry, we couldn't find the definition of: `"+ query +"`")
         word = get_word_from_div(word_div, True)
         embed = word_to_embed(word)
@@ -182,6 +186,7 @@ class UrbanDictionary(commands.Cog):
         word = get_word_from_div(word_div[randint(0, 6)], True)
         embed = word_to_embed(word)
         await ctx.send(embed=embed)
+
 
 
 def setup(bot):
