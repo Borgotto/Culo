@@ -7,7 +7,7 @@ import json
 
 ###################
 #    bot setup    #
-###################
+################### 
 def get_token():
     if os.getenv('BOT_TOKEN') is not None:
         return os.environ.get("BOT_TOKEN")
