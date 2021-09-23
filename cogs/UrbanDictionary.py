@@ -49,7 +49,7 @@ def word_to_embed(word):
         if len(word[key]) > 1023:
             while len(word[key]) > 861:
                 word[key] = word[key].rsplit(' ', 2)[0]
-            word[key] += ' [...]\n[(open in the browser for the complete definition)]('+word['word'].split('(')[1].split(')')[0]+')'
+            word[key] += ' [...]\n[(open in the browser for the complete definition)]('+word['word'].split('(')[1]
 
     embed=Embed(title=word['day'], color=0xffffff)
     if word['gif']: embed.set_image(url=word['gif'])
@@ -60,7 +60,7 @@ def word_to_embed(word):
     return embed
 
 #given the urban dictionary url it returns the words on that page
-def get_divs_from_url(url, limit=1):
+def get_divs_from_url(url, limit=7):
     html = get_html(url)
     soup = BeautifulSoup(html.content, "lxml")
     if limit == 1:
@@ -80,12 +80,13 @@ class UrbanDictionary(commands.Cog):
         try:
             file = open('config/wotd_settings.json', 'r'); file.close()
         except IOError:
-            file = open('config/wotd_settings.json', 'w'); file.write('{\n\t"last_wotd_day": "",\n\t"channel_ids": {\n\t}\n}'); file.close()
+            file = open('config/wotd_settings.json', 'w'); file.write('{\n\t"last_wotd": "",\n\t"channel_ids": {\n\t}\n}'); file.close()
 
     @commands.Cog.listener()
     async def on_ready(self):
         self.wotd_loop.start()
         print("Urban Dictionary caricato!")
+
 
 
     ###################
@@ -96,18 +97,16 @@ class UrbanDictionary(commands.Cog):
     async def wotd_loop(self):
         with open('config/wotd_settings.json', 'r') as file:
             wotd_settings = json.load(file)
-            if wotd_settings["last_wotd_day"] != "": limit = 7
-            else: limit = 1
 
         words_to_send = []
-        wotd_divs = get_divs_from_url("https://www.urbandictionary.com/", limit=7)
-        for div in wotd_divs[:limit]:
-            if div.contents[0].text.upper() != wotd_settings["last_wotd_day"]:
+        wotd_divs = get_divs_from_url("https://www.urbandictionary.com/")
+        for div in wotd_divs:
+            if div.contents[1].text != wotd_settings["last_wotd"]:
                 words_to_send.append(get_word_from_div(div, href=True))
             else: break
 
         if len(words_to_send) > 0:
-            wotd_settings["last_wotd_day"] = words_to_send[0]['day']
+            wotd_settings["last_wotd"] = wotd_divs[0].contents[1].text
             with open('config/wotd_settings.json', 'w') as file:
                 json.dump(wotd_settings, file, indent=4) 
             for wotd in reversed(words_to_send):
@@ -160,30 +159,29 @@ class UrbanDictionary(commands.Cog):
     ############################
     #    urbandict commands    #
     ############################
-    @commands.command(name="wotd", aliases=["pdg"],help="Ti dice la parola del giorno")
+    @commands.command(name="wotd", aliases=["pdg"],help="It tells you the Word of the Day!")
     async def wotd(self, ctx, day:int=0):  
         if day not in range(0,7): 
-            return await ctx.send("Puoi richiedere una wotd non più vecchia di 6 giorni!")
-        wotd_div = []
-        wotd_div.append(get_divs_from_url("https://www.urbandictionary.com/", limit=(day+1)))
-        wotd = get_word_from_div(wotd_div[day], True)
+            return await ctx.send("You can't fetch a wotd older than 6 days!")
+        wotd_divs = get_divs_from_url("https://www.urbandictionary.com/")
+        wotd = get_word_from_div(wotd_divs[day], True)
         embed = word_to_embed(wotd)
         await ctx.send(embed=embed)
 
-    @commands.command(name="definisci", aliases=["define", "definition", "definizione"],help="Ti dice la definizione delle parole inserite")
+    @commands.command(name="define", aliases=["definisci", "definition", "definizione"],help="Get the urban definition of a word")
     async def definisci(self, ctx, *query):
         query = " ".join(query)
         encodedURL = 'https://www.urbandictionary.com/define.php?term=' + quote(query)
-        word_div = get_divs_from_url(encodedURL)
+        word_div = get_divs_from_url(encodedURL, limit=1)
         if word_div is None: return await ctx.send("¯\_(ツ)_/¯\nSorry, we couldn't find the definition of: `"+ query +"`")
         word = get_word_from_div(word_div, True)
         embed = word_to_embed(word)
         await ctx.send(embed=embed)
 
-    @commands.command(name="parola_random", aliases=["rand_parola", "rand_word", "parola", "word"],help="Ti dice la definizione di una parola a caso")
+    @commands.command(name="rand_word", aliases=["rand_parola", "parola_random", "parola", "word"],help="Feeling lucky? Get a random word")
     async def rand_word(self, ctx):   
-        word_div = get_divs_from_url('https://www.urbandictionary.com/random.php?page=' + str(randint(2, 999)), limit=7)
-        word = get_word_from_div(word_div[randint(0, 6)], True)
+        word_divs = get_divs_from_url('https://www.urbandictionary.com/random.php?page=' + str(randint(2, 999)))
+        word = get_word_from_div(word_divs[randint(0, 6)], True)
         embed = word_to_embed(word)
         await ctx.send(embed=embed)
 
