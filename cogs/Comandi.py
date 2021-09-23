@@ -1,6 +1,6 @@
 from discord.ext import commands
-from discord import Embed, Member, VoiceChannel
-from datetime import datetime, timedelta
+from discord import Member, VoiceChannel
+from datetime import timedelta
 
 class Comandi(commands.Cog):
     def __init__(self, bot):
