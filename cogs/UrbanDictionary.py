@@ -106,7 +106,7 @@ class UrbanDictionary(commands.Cog):
                 words_to_send.append(get_word_from_div(div, href=True))
             else: break
 
-        if len(words_to_send) > 0:
+        if (0 < len(words_to_send) < 7):
             wotd_settings["last_wotd"] = wotd_divs[0].contents[1].text
             with open('config/wotd_settings.json', 'w') as file:
                 json.dump(wotd_settings, file, indent=4) 
