@@ -181,9 +181,16 @@ async def on_command_error(ctx, error):
 
 
 
-###############################
-#    commands for testing     #
-###############################
+############################
+#    debugging commands    #
+############################
+@bot.command(name="purge", help="Deletes # of the messages sent by the bot")
+@commands.is_owner()
+async def purge(ctx, amount : int = 7):
+    await ctx.message.delete()
+    for i in range(amount):
+        await discord.utils.get(await ctx.channel.history(limit=100).flatten(), author=bot.user).delete()
+
 @bot.command(name="test_errore", help="Genera un errore")
 @commands.is_owner()
 async def errore(ctx):
