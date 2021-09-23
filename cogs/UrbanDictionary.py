@@ -51,10 +51,11 @@ def word_to_embed(word):
                 word[key] = word[key].rsplit(' ', 2)[0]
             word[key] += ' [...]\n[(open in the browser for the complete definition)]('+word['word'].split('(')[1]
 
-    embed=Embed(title=word['day'], color=0xffffff)
+    embed=Embed(title=word['word'].split(']')[0][1:],
+                description=word['meaning'],
+                url=word['word'].split('(')[1][:-1],
+                color=0xFFFFFF)
     if word['gif']: embed.set_image(url=word['gif'])
-    embed.add_field(name='Word:', value='**'+word['word']+'**', inline=False)
-    embed.add_field(name='Meaning:', value=word['meaning'], inline=False)
     embed.add_field(name='Example:', value=word['example'], inline=False)
     embed.set_footer(text='Definition '+word['contributor'])
     return embed
@@ -109,11 +110,12 @@ class UrbanDictionary(commands.Cog):
             wotd_settings["last_wotd"] = wotd_divs[0].contents[1].text
             with open('config/wotd_settings.json', 'w') as file:
                 json.dump(wotd_settings, file, indent=4) 
-            for wotd in reversed(words_to_send):
-                embed = word_to_embed(wotd)
-                for id in wotd_settings["channel_ids"].values():       
-                    channel = self.bot.get_channel(id)
-                    if channel is not None: await channel.send(embed=embed)
+            for id in wotd_settings["channel_ids"].values():       
+                channel = self.bot.get_channel(id)
+                if channel is not None: 
+                    #await channel.send("**New WOTD dropped**")
+                    for wotd in reversed(words_to_send):
+                        await channel.send(embed=word_to_embed(wotd))
 
 
 
@@ -160,30 +162,28 @@ class UrbanDictionary(commands.Cog):
     #    urbandict commands    #
     ############################
     @commands.command(name="wotd", aliases=["pdg"],help="It tells you the Word of the Day!")
-    async def wotd(self, ctx, day:int=0):  
-        if day not in range(0,7): 
-            return await ctx.send("You can't fetch a wotd older than 6 days!")
-        wotd_divs = get_divs_from_url("https://www.urbandictionary.com/")
-        wotd = get_word_from_div(wotd_divs[day], True)
+    async def wotd(self, ctx):  
+        wotd_div = get_divs_from_url("https://www.urbandictionary.com/", limit=1)
+        wotd = get_word_from_div(wotd_div, True)
         embed = word_to_embed(wotd)
-        await ctx.send(embed=embed)
+        await ctx.send(f"**Here's today's Word of the Day!**",embed=embed)
 
     @commands.command(name="define", aliases=["definisci", "definition", "definizione"],help="Get the urban definition of a word")
     async def definisci(self, ctx, *query):
         query = " ".join(query)
         encodedURL = 'https://www.urbandictionary.com/define.php?term=' + quote(query)
         word_div = get_divs_from_url(encodedURL, limit=1)
-        if word_div is None: return await ctx.send("¯\_(ツ)_/¯\nSorry, we couldn't find the definition of: `"+ query +"`")
+        if word_div is None: return await ctx.send("**¯\_(ツ)_/¯**\nSorry, we couldn't find the definition of: `"+ query +"`")
         word = get_word_from_div(word_div, True)
         embed = word_to_embed(word)
-        await ctx.send(embed=embed)
+        await ctx.send(f"**Definition of: ** `"+ query +"`",embed=embed)
 
     @commands.command(name="rand_word", aliases=["rand_parola", "parola_random", "parola", "word"],help="Feeling lucky? Get a random word")
     async def rand_word(self, ctx):   
         word_divs = get_divs_from_url('https://www.urbandictionary.com/random.php?page=' + str(randint(2, 999)))
         word = get_word_from_div(word_divs[randint(0, 6)], True)
         embed = word_to_embed(word)
-        await ctx.send(embed=embed)
+        await ctx.send(f"**Here's a random word from Urban Dictionary**",embed=embed)
 
 
 
