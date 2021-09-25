@@ -77,11 +77,14 @@ def get_divs_from_url(url, limit=7):
 ###################
 class UrbanDictionary(commands.Cog):
     def __init__(self, bot):
-        self.bot = bot        
+        self.bot = bot
+        self.last_word = ""
         try:
-            file = open('config/wotd_settings.json', 'r'); file.close()
+            with open('config/wotd_settings.json', 'r') as file:
+                self.last_word = json.load(file)["last_word"]
         except IOError:
-            file = open('config/wotd_settings.json', 'w'); file.write('{\n\t"last_wotd": "",\n\t"channel_ids": {\n\t}\n}'); file.close()
+            with open('config/wotd_settings.json', 'w') as file:
+                json.dump({"last_word": "","channel_ids": {}}, file, indent=4)
 
     @commands.Cog.listener()
     async def on_ready(self):
@@ -96,20 +99,25 @@ class UrbanDictionary(commands.Cog):
     #sends the wotd every day in the channels from wotd_settings.json
     @tasks.loop(minutes=9)
     async def wotd_loop(self):
-        with open('config/wotd_settings.json', 'r') as file:
-            wotd_settings = json.load(file)
-
-        words_to_send = []
         wotd_divs = get_divs_from_url("https://www.urbandictionary.com/")
-        for div in wotd_divs:
-            if div.contents[1].text != wotd_settings["last_wotd"]:
-                words_to_send.append(get_word_from_div(div, href=True))
-            else: break
+        words_to_send = []  
+
+        if self.last_word == "":
+            words_to_send.append(get_word_from_div(wotd_divs[0], href=True))
+        else:
+            for div in wotd_divs:
+                if div.contents[1].text != self.last_word:
+                    words_to_send.append(get_word_from_div(div, href=True))
+                else: break
 
         if len(words_to_send) > 0:
-            wotd_settings["last_wotd"] = wotd_divs[0].contents[1].text
+            self.last_word = wotd_divs[0].contents[1].text
+            with open('config/wotd_settings.json', 'r') as file:
+                wotd_settings = json.load(file)
+                wotd_settings["last_word"] = self.last_word
             with open('config/wotd_settings.json', 'w') as file:
                 json.dump(wotd_settings, file, indent=4) 
+
             for id in wotd_settings["channel_ids"].values():       
                 channel = self.bot.get_channel(id)
                 if channel is not None: 
