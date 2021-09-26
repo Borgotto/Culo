@@ -120,7 +120,7 @@ class UrbanDictionary(commands.Cog):
             with open('config/wotd_settings.json', 'w') as file:
                 json.dump(wotd_settings, file, indent=4) 
 
-            if len(words_to_send) < 8:
+            if len(words_to_send) < 7:
                 for id in wotd_settings["channel_ids"].values():       
                     channel = self.bot.get_channel(id)
                     if channel is not None: 
