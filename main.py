@@ -22,6 +22,7 @@ def get_token():
 
 #function that returns the bot prefix by the guild id
 def get_prefix(client, message):
+    if message.guild is None: return '🍑'
     with open('config/prefixes.json', 'r') as file:
         prefixes = json.load(file)
     return prefixes[str(message.guild.id)]  
@@ -37,7 +38,7 @@ def update_prefixes():
             try:
                 updated_prefixes[str(guild.id)] = str(prefixes[str(guild.id)])
             except KeyError:
-                updated_prefixes[str(guild.id)] = '🍑 '
+                updated_prefixes[str(guild.id)] = '🍑'
 
     with open('config/prefixes.json', 'w') as file: 
         json.dump(updated_prefixes, file, indent=4)
@@ -177,8 +178,16 @@ async def on_command_error(ctx, error):
     if isinstance(error, commands.MissingRequiredArgument):
         return await ctx.send(f'Manca qualche argomento per usare questo comando... :peach: :thinking:')
 
-    return await ctx.send("C'è stato un errore con il comando, hai inserito i giusti parametri? :peach: :weary:")
+    await ctx.send(f"C'è stato qualche errore con il comando :peach: :poop:")
 
+    await bot.get_user(bot.owner_id).send(f"**There was an error with the bot!**\n`{error.original}`\n\n\
+    **Server:**  `{ctx.guild.name} [{ctx.guild.id}]`\n\
+    **Channel:**  `{ctx.channel.name} [{ctx.channel.id}]`\n\
+    **Command:**  `{ctx.command.name}`\n\
+    **Arguments:**  `{ctx.message.content.split(ctx.command.name)[1][1:]}`\n\
+    **Command author:**  {ctx.message.author.mention} `[{ctx.message.author.id}]`\n\
+    **Date:**  `{ctx.message.created_at.strftime('%d/%m/%Y - %H:%M:%S')}`\n\
+")  
 
 
 ############################
@@ -187,7 +196,6 @@ async def on_command_error(ctx, error):
 @bot.command(name="purge", help="Deletes # of the messages sent by the bot")
 @commands.is_owner()
 async def purge(ctx, amount : int = 7):
-    await ctx.message.delete()
     for i in range(amount):
         await discord.utils.get(await ctx.channel.history(limit=100).flatten(), author=bot.user).delete()
 
