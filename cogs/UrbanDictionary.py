@@ -12,6 +12,12 @@ import json
 #    auxiliary functions    #
 #############################
 
+#given a url from urban dictionary it returns the div elements containing words
+def get_divs_from_url(url):
+    html = get_html(url)
+    soup = BeautifulSoup(html.content, "lxml")
+    return soup.find_all('div', class_='def-panel')
+
 #given parent 'div' it returns the concat. of its children's text
 #set 'href' to True if you want hrefs to be included in the string
 def get_str_from_div(div, href=False, string=""):
@@ -22,17 +28,18 @@ def get_str_from_div(div, href=False, string=""):
             if href is True:
                 string += '['+escape_markdown(content.text)+'](https://www.urbandictionary.com'+content.attrs['href']+')'
             else:
-                string += content.text
+                string += escape_markdown(content.text)
         elif type(content) is element.Tag and content.name == 'br':
             string += '\n'
     return string.replace("\r","")
 
 #given the WOTD div it returns Info on that Word Of The Day
 def get_word_from_div(div, href=False):
-    day = div.contents[0].text.upper()
-    word = get_str_from_div(div.contents[1], href)
-    meaning = get_str_from_div(div.contents[2], href)
-    example = get_str_from_div(div.contents[3], href)
+    day = div.contents[0].text
+    word = div.contents[1].text
+    url = 'https://www.urbandictionary.com'+div.contents[1].contents[0].attrs['href']
+    meaning = get_str_from_div(div.contents[2], href=href)
+    example = get_str_from_div(div.contents[3], href=href)
 
     gif = contributor = ""
     if div.contents[4].attrs['class'][0] == 'gif':
@@ -41,34 +48,29 @@ def get_word_from_div(div, href=False):
     elif div.contents[4].attrs['class'][0] == 'contributor':
         contributor = get_str_from_div(div.contents[4], href=False)
 
-    return {'day': day, 'word': word, 'meaning': meaning, 'example': example, 'gif': gif, 'contributor': contributor}
+    return {'day': day, 'word': word, 'url': url, 'meaning': meaning, 'example': example, 'gif': gif, 'contributor': contributor}
 
 #given word it returns the embed ready to be sent
 def word_to_embed(word):
-    for key in word:
-        if len(word[key]) > 1023:
-            while len(word[key]) > 861:
-                word[key] = word[key].rsplit(' ', 2)[0]
-            word[key] += ' [...]\n[(open in the browser for the complete definition)]('+word['word'].split('(')[1]
+    if len(word['word']) > 255:
+        word['word'] = word['word'][:251]+'...'
 
-    embed=Embed(title=word['word'].split(']')[0][1:],
-                description=word['meaning'],
-                url=word['word'].split('(')[1][:-1],
-                color=0xFFFFFF)
+    if len(word['meaning']) > 4095:
+        word['meaning'] = word['meaning'][:3700]
+        word['meaning'] = word['meaning'].rsplit(' ', 2)[0]
+        word['meaning'] += ' [...]\n[(open in the browser for the complete definition)]('+word['url']+')'
+
+    if len(word['example']) > 1023:
+        word['example'] = word['example'][:1020]+'...'
+
+    embed=Embed(title=escape_markdown(word['word']),
+            description=word['meaning'], 
+            url=word['url'], 
+            color=0x134FE6)
     if word['gif']: embed.set_image(url=word['gif'])
     embed.add_field(name='Example:', value=word['example'], inline=False)
     embed.set_footer(text='Definition '+word['contributor'])
     return embed
-
-#given the urban dictionary url it returns the words on that page
-def get_divs_from_url(url, limit=7):
-    html = get_html(url)
-    soup = BeautifulSoup(html.content, "lxml")
-    if limit == 1:
-        return soup.find('div', class_='def-panel')
-    elif limit > 1:
-        wotd_div = soup.find_all('div', class_='def-panel')
-        return wotd_div[:limit]
 
 
 
@@ -100,11 +102,11 @@ class UrbanDictionary(commands.Cog):
     @tasks.loop(minutes=9)
     async def wotd_loop(self):
         wotd_divs = get_divs_from_url("https://www.urbandictionary.com/")
-        words_to_send = []  
 
+        words_to_send = []  
         if self.last_word == "":
             words_to_send.append(get_word_from_div(wotd_divs[0], href=True))
-        else:
+        else:            
             for div in wotd_divs:
                 if div.contents[1].text != self.last_word:
                     words_to_send.append(get_word_from_div(div, href=True))
@@ -118,12 +120,13 @@ class UrbanDictionary(commands.Cog):
             with open('config/wotd_settings.json', 'w') as file:
                 json.dump(wotd_settings, file, indent=4) 
 
-            for id in wotd_settings["channel_ids"].values():       
-                channel = self.bot.get_channel(id)
-                if channel is not None: 
-                    #await channel.send("**New WOTD dropped**")
-                    for wotd in reversed(words_to_send):
-                        await channel.send(embed=word_to_embed(wotd))
+            if len(words_to_send) < 8:
+                for id in wotd_settings["channel_ids"].values():       
+                    channel = self.bot.get_channel(id)
+                    if channel is not None: 
+                        await channel.send("**New WOTD dropped**")
+                        for wotd in words_to_send:
+                            await channel.send(embed=word_to_embed(wotd))
 
 
 
@@ -144,7 +147,7 @@ class UrbanDictionary(commands.Cog):
         with open('config/wotd_settings.json', 'w') as file: 
             json.dump(wotd_settings, file, indent=4)
 
-        await ctx.send(f'Channel set to: <#{channel[2:-1]}>') 
+        await ctx.send(f'Channel set to: {channel}') 
 
     @commands.command(name="remove_wotd_channel",help="Unset the channel for the WOTD")
     @commands.has_permissions(administrator=True) 
@@ -171,8 +174,8 @@ class UrbanDictionary(commands.Cog):
     ############################
     @commands.command(name="wotd", aliases=["pdg"],help="It tells you the Word of the Day!")
     async def wotd(self, ctx):  
-        wotd_div = get_divs_from_url("https://www.urbandictionary.com/", limit=1)
-        wotd = get_word_from_div(wotd_div, True)
+        wotd_div = get_divs_from_url("https://www.urbandictionary.com/")
+        wotd = get_word_from_div(wotd_div[0], True)
         embed = word_to_embed(wotd)
         await ctx.send(f"**Here's today's Word of the Day!**",embed=embed)
 
@@ -180,9 +183,9 @@ class UrbanDictionary(commands.Cog):
     async def definisci(self, ctx, *query):
         query = " ".join(query)
         encodedURL = 'https://www.urbandictionary.com/define.php?term=' + quote(query)
-        word_div = get_divs_from_url(encodedURL, limit=1)
-        if word_div is None: return await ctx.send("**¯\_(ツ)_/¯**\nSorry, we couldn't find the definition of: `"+ query +"`")
-        word = get_word_from_div(word_div, True)
+        word_div = get_divs_from_url(encodedURL)
+        if word_div == []: return await ctx.send("**¯\_(ツ)_/¯**\nSorry, we couldn't find the definition of: `"+ query +"`")
+        word = get_word_from_div(word_div[0], True)
         embed = word_to_embed(word)
         await ctx.send(f"**Definition of: ** `"+ query +"`",embed=embed)
 
