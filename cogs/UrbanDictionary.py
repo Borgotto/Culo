@@ -112,7 +112,7 @@ class UrbanDictionary(commands.Cog):
                     words_to_send.append(get_word_from_div(div, href=True))
                 else: break
 
-        if len(words_to_send) > 0:
+        if 0 < len(words_to_send) < 6:
             self.last_word = wotd_divs[0].contents[1].text
             with open('config/wotd_settings.json', 'r') as file:
                 wotd_settings = json.load(file)
@@ -120,13 +120,12 @@ class UrbanDictionary(commands.Cog):
             with open('config/wotd_settings.json', 'w') as file:
                 json.dump(wotd_settings, file, indent=4) 
 
-            if len(words_to_send) < 7:
-                for id in wotd_settings["channel_ids"].values():       
-                    channel = self.bot.get_channel(id)
-                    if channel is not None: 
-                        await channel.send("**New WOTD dropped**")
-                        for wotd in words_to_send:
-                            await channel.send(embed=word_to_embed(wotd))
+            for id in wotd_settings["channel_ids"].values():       
+                channel = self.bot.get_channel(id)
+                if channel is not None: 
+                    await channel.send("**New WOTD dropped**")
+                    for wotd in words_to_send:
+                        await channel.send(embed=word_to_embed(wotd))
 
 
 
