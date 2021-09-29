@@ -1,6 +1,7 @@
 import discord
 from discord.ext import commands
 from discord import Intents
+from requests import get
 import os
 import sys
 import json
@@ -213,6 +214,12 @@ async def test_messaggio(ctx, channel):
 async def print_console(ctx, *string : str):
     print(str(*string))
     await ctx.send(f"Printed `{str(*string)}` in terminal")
+
+@bot.command(name="public_ip", help="Returns the public ip of the network hosting the bot")
+@commands.is_owner()
+async def public_ip(ctx):
+    await ctx.message.delete()
+    await ctx.send(f"`{get('https://ident.me').text}`", delete_after=3)
 
 
 #####################
