@@ -208,6 +208,11 @@ async def errore(ctx):
 async def test_messaggio(ctx, channel):
     pass
 
+@bot.command(name="print", help="Print something on stdout")
+@commands.is_owner()
+async def print_console(ctx, *string : str):
+    print(str(*string))
+    await ctx.send(f"Printed `{str(*string)}` in terminal")
 
 
 #####################
