@@ -68,7 +68,7 @@ def word_to_embed(word):
             url=word['url'], 
             color=0x134FE6)
     if word['gif']: embed.set_image(url=word['gif'])
-    embed.add_field(name='Example:', value=word['example'], inline=False)
+    if word['example']: embed.add_field(name='Example:', value=word['example'], inline=False)
     embed.set_footer(text='Definition '+word['contributor'])
     return embed
 
