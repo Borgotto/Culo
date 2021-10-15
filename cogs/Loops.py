@@ -28,7 +28,7 @@ class Loops(commands.Cog):
     async def oraesatta(self):
         orario = datetime.now().strftime("%H:%M")
         if (orario == "07:15"):
-            file_path = "home/pi/ora_esatta.mp4" if system() == "Linux" else "C:/Users/Borgo/Desktop/ora_esatta.mp4"
+            file_path = "/home/pi/ora_esatta.mp4" if system() == "Linux" else "C:/Users/Borgo/Desktop/ora_esatta.mp4"
             for id in [805397632494338091]:
                 channel = self.bot.get_channel(id)
                 try:
