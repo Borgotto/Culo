@@ -29,7 +29,7 @@ class Loops(commands.Cog):
         orario = datetime.now().strftime("%H:%M")
         if (orario == "07:15"):
             file_path = "/home/pi/ora_esatta.mp4" if system() == "Linux" else "C:/Users/Borgo/Desktop/ora_esatta.mp4"
-            for id in [805397632494338091]:
+            for id in [863166266554318898, 810291905056604211]:
                 channel = self.bot.get_channel(id)
                 try:
                     await channel.send(f"L'ora esatta è offerta da: ***Culo*** :peach: \nSono le **{orario}**", file=File(file_path))
