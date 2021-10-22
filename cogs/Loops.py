@@ -13,7 +13,7 @@ class Loops(commands.Cog):
     @commands.Cog.listener()
     async def on_ready(self):
         self.fabio.start()
-        self.oraesatta.start()
+        #self.oraesatta.start()
         print("Loop caricati!")
 
     #Loop per rinominare Fabio.exe ( id = 192261771380260864 )
