@@ -12,13 +12,11 @@ import json
 def get_token():
     if os.getenv('BOT_TOKEN') is not None:
         return os.environ.get("BOT_TOKEN")
-    if len(sys.argv) > 1:
-        return sys.argv[1]
     try:
         with open('token') as file:
             return file.readline()
     except IOError:
-        print("\nTi manca il TOKEN del bot!\nPassalo come argomento\nOppure imposta una variabile d'ambiente 'BOT_TOKEN'\nOppure crea un file 'TOKEN' con all'interno il token\n")
+        print("\nTi manca il TOKEN del bot!\nImposta una variabile d'ambiente 'BOT_TOKEN'\nOppure crea un file 'TOKEN' con all'interno il token\n")
         quit()
 
 #function that returns the bot prefix by the guild id
