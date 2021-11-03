@@ -87,7 +87,7 @@ class MusicPlayer(commands.Cog):
         self.next = asyncio.Event()
 
         self.np = None  # Now playing message
-        self.volume = .5
+        self.volume = .25
         self.current = None
 
         ctx.bot.loop.create_task(self.player_loop())
@@ -111,7 +111,7 @@ class MusicPlayer(commands.Cog):
                     await self._channel.send(f"C'è stato un errore nella richiesta della canzone.\n"f'```css\n[{e}]\n```')
                     continue
 
-            source.volume = self.volume
+            source.volume = self.volume-0.1
             self.current = source
 
             self._guild.voice_client.play(source, after=lambda _: self.bot.loop.call_soon_threadsafe(self.next.set))
