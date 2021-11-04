@@ -8,6 +8,8 @@ from discord import Embed, FFmpegPCMAudio, HTTPException, PCMVolumeTransformer, 
 
 ytdlopts = {
     'format': 'bestaudio/best',
+    'extractaudio': True,
+    'audioformat': 'mp3',
     'outtmpl': 'downloads/%(extractor)s-%(id)s-%(title)s.%(ext)s',
     'restrictfilenames': True,
     'noplaylist': True,
@@ -21,7 +23,7 @@ ytdlopts = {
 }
 
 ffmpegopts = {
-    'before_options': '-nostdin -reconnect 1 -reconnect_streamed 1 -reconnect_on_network_error 1 -reconnect_on_http_error 1 -reconnect_delay_max 200',
+    'before_options': '-nostdin -reconnect 1 -reconnect_streamed 1 -reconnect_on_network_error 1 -reconnect_on_http_error 1 -reconnect_delay_max 10',
     'options': '-vn'
 }
 
@@ -71,7 +73,7 @@ class YTDLSource(PCMVolumeTransformer):
         to_run = partial(ytdl.extract_info, url=data['webpage_url'], download=False)
         data = await loop.run_in_executor(None, to_run)
 
-        return cls(FFmpegPCMAudio(data['url']), data=data, requester=requester)
+        return cls(FFmpegPCMAudio(data['url'], before_options=ffmpegopts['before_options'], options=ffmpegopts['options']), data=data, requester=requester)
 
 
 class MusicPlayer(commands.Cog):
