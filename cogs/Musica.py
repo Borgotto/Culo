@@ -21,7 +21,7 @@ ytdlopts = {
 }
 
 ffmpegopts = {
-    'before_options': '-nostdin -reconnect 1 -reconnect_streamed 1 -reconnect_on_network_error 1 -reconnect_on_http_error 1 -reconnect_delay_max 20',
+    'before_options': '-nostdin -reconnect 1 -reconnect_streamed 1 -reconnect_on_network_error 1 -reconnect_on_http_error 1 -reconnect_delay_max 200',
     'options': '-vn'
 }
 
