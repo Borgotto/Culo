@@ -101,7 +101,7 @@ class MusicPlayer(commands.Cog):
             self.next.clear()
 
             try:
-                async with timeout(300):
+                async with timeout(120):
                     source = await self.queue.get()
             except asyncio.TimeoutError:
                 return self.destroy(self._guild)
@@ -125,10 +125,10 @@ class MusicPlayer(commands.Cog):
             source.cleanup()
             self.current = None
 
-            try:
-                await self.np.delete()
-            except HTTPException:
-                pass
+            #try:
+                #await self.np.delete()
+            #except HTTPException:
+                #pass
 
     def destroy(self, guild):
         return self.bot.loop.create_task(self._cog.cleanup(guild))
