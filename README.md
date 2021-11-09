@@ -55,9 +55,9 @@
 - [x] Comandi
 - [x] Eventi *(non risponde a molti messaggi ancora)*
 - [x] Info
-- [ ] Loops ***(non ha molti usi al momento)***
+- [x] Loops ***(non ha molti usi al momento)***
 - [x] Musica
-- [ ] Meteo
-- [ ] Image processing
 - [x] Urban Dictionary: Word of the Day
 - [x] Ubran Dictionary: Word definition
+- [ ] Meteo
+- [ ] Image processing
