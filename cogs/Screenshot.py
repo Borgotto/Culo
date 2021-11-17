@@ -30,6 +30,7 @@ class Screenshot(commands.Cog):
             pass #nessun pacchetto, riprovo tra due secondi
 
     @commands.command(name="start_server", aliases=['server_start','start_screenshot_server'], help="Avvia il server per ricevere le immagini")
+    @commands.has_permissions(administrator=True)
     async def start_server(self, ctx, img_channel : Optional[TextChannel], img_name : Optional[str] = "screenshot.png", ip : Optional[str] = "", port : Optional[int] = 8080):
         if self.server_task.is_running():
             return await ctx.send(f"The server Task is already running!", reference=ctx.message, mention_author=False)
@@ -42,6 +43,7 @@ class Screenshot(commands.Cog):
         await ctx.send(f"The server Task has been started!", reference=ctx.message, mention_author=False)
 
     @commands.command(name="stop_server", aliases=['server_stop','stop_screenshot_server'], help="Ferma il server delle immagini")
+    @commands.has_permissions(administrator=True)
     async def stop_server(self, ctx):
         if not self.server_task.is_running():
             return await ctx.send(f"The server Task is not running!", reference=ctx.message, mention_author=False)
