@@ -1,5 +1,5 @@
 from discord.ext import commands, tasks
-from discord.utils import escape_markdown
+from discord.utils import escape_markdown, get
 from discord import Embed
 from bs4 import BeautifulSoup, element
 from requests import get as get_html
@@ -136,7 +136,7 @@ class UrbanDictionary(commands.Cog):
     @commands.has_permissions(administrator=True) 
     async def set_wotd_channel(self, ctx, channel):
         if self.bot.get_channel(int(channel[2:-1])) is None:
-            return await ctx.send(f"Channel passed is not valid or it's hidden from the bot") 
+            return await ctx.send(f"Channel passed is not valid or it's hidden from the bot", reference=ctx.message, mention_author=False) 
             
         with open('config/wotd_settings.json', 'r') as file:
             wotd_settings = json.load(file)
@@ -146,7 +146,21 @@ class UrbanDictionary(commands.Cog):
         with open('config/wotd_settings.json', 'w') as file: 
             json.dump(wotd_settings, file, indent=4)
 
-        await ctx.send(f'Channel set to: {channel}') 
+        await ctx.send(f'Channel set to: {channel}', reference=ctx.message, mention_author=False) 
+
+    @commands.command(name="get_wotd_channel",help="Returns the wotd channel if set")
+    @commands.has_permissions(administrator=True)
+    async def get_wotd_channel(self, ctx):
+        with open('config/wotd_settings.json', 'r') as file:
+            wotd_settings = json.load(file)
+
+        wotd_channel_id = wotd_settings["channel_ids"].get(str(ctx.guild.id))
+        wotd_channel = get(ctx.guild.text_channels, id=wotd_channel_id)
+
+        if wotd_channel:
+            await ctx.send(f'Channel currently set to: {wotd_channel.mention}', reference=ctx.message, mention_author=False)
+        else:
+            await ctx.send(f'Channel is not set.', reference=ctx.message, mention_author=False)
 
     @commands.command(name="remove_wotd_channel",help="Unset the channel for the WOTD")
     @commands.has_permissions(administrator=True) 
@@ -157,9 +171,9 @@ class UrbanDictionary(commands.Cog):
             wotd_settings["channel_ids"].pop(str(ctx.guild.id)) 
             with open('config/wotd_settings.json', 'w') as file: 
                 json.dump(wotd_settings, file, indent=4)
-            await ctx.send(f'Channel unset') 
+            await ctx.send(f'Channel unset', reference=ctx.message, mention_author=False) 
         except KeyError:
-            await ctx.send(f'The channel for the WOTD is not set') 
+            await ctx.send(f'The channel for the WOTD is not set', reference=ctx.message, mention_author=False) 
 
     @commands.command(name="restart_wotd_loop",help="Restart the WOTD Task")
     @commands.is_owner()
@@ -176,7 +190,7 @@ class UrbanDictionary(commands.Cog):
         wotd_div = get_divs_from_url("https://www.urbandictionary.com/")
         wotd = get_word_from_div(wotd_div[0], True)
         embed = word_to_embed(wotd)
-        await ctx.send(f"**Here's today's Word of the Day!**",embed=embed)
+        await ctx.send(f"**Here's today's Word of the Day!**",embed=embed, reference=ctx.message, mention_author=False)
 
     @commands.command(name="define", aliases=["definisci", "definition", "definizione"],help="Get the urban definition of a word")
     async def definisci(self, ctx, *query):
@@ -186,14 +200,14 @@ class UrbanDictionary(commands.Cog):
         if word_div == []: return await ctx.send("**¯\_(ツ)_/¯**\nSorry, we couldn't find the definition of: `"+ query +"`")
         word = get_word_from_div(word_div[0], True)
         embed = word_to_embed(word)
-        await ctx.send(f"**Definition of: ** `"+ query +"`",embed=embed)
+        await ctx.send(embed=embed, reference=ctx.message, mention_author=False)
 
     @commands.command(name="rand_word", aliases=["rand_parola", "parola_random", "parola", "word"],help="Feeling lucky? Get a random word")
     async def rand_word(self, ctx):   
         word_divs = get_divs_from_url('https://www.urbandictionary.com/random.php?page=' + str(randint(2, 999)))
         word = get_word_from_div(word_divs[randint(0, 6)], True)
         embed = word_to_embed(word)
-        await ctx.send(f"**Here's a random word from Urban Dictionary**",embed=embed)
+        await ctx.send(f"**Here's a random word from Urban Dictionary**",embed=embed, reference=ctx.message, mention_author=False)
 
 
 
