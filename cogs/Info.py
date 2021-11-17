@@ -1,6 +1,5 @@
 from datetime import datetime
 from typing import Optional
-
 from discord import Embed, Member
 from discord.ext import commands
 import json
@@ -34,7 +33,7 @@ class Info(commands.Cog):
 		for name, value, inline in fields:
 			embed.add_field(name=name, value=value, inline=inline)
 
-		await ctx.send(embed=embed)
+		await ctx.send(embed=embed, reference=ctx.message, mention_author=False)
 
 	@commands.command(name="serverinfo", aliases=["guildinfo", "si", "gi"], help="Mostra le informazioni del server discord")
 	async def server_info(self, ctx):
@@ -66,20 +65,20 @@ class Info(commands.Cog):
 		for name, value, inline in fields:
 			embed.add_field(name=name, value=value, inline=inline)
 
-		await ctx.send(embed=embed)
+		await ctx.send(embed=embed, reference=ctx.message, mention_author=False)
 
 	@commands.command(name="lista_server", aliases=["lista server", "servers"], help="Stampa la lista di tutti i server in cui il bot fa parte")
 	@commands.is_owner()
 	async def lista_server(self, ctx):
 		message = f""
-		with open('prefixes.json', 'r') as file: 
-			prefixes = json.load(file) 
+		with open('prefixes.json', 'r') as file:
+			prefixes = json.load(file)
 			message = message + f'Il bot è in {len(self.bot.guilds)} server!\n'
 			message = message + f'Lista dei server in cui il bot è dentro:\n\n'
 			for guild in self.bot.guilds:
 				message = message + f'Nome server:  "{str(guild.name)}"\n'
 				message = message + f'Prefisso server:  "\\{str(prefixes[str(guild.id)])}"\n\n'
-		await ctx.send(message)
+		await ctx.send(message, reference=ctx.message, mention_author=False)
 
 def setup(bot):
 	bot.add_cog(Info(bot))
