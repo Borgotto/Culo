@@ -15,7 +15,7 @@
 - #### Prefisso del bot dinamico e modificabile server per server *(default:* 🍑 *)*
   - Basta scrivere `🍑prefisso <il prefisso>` per modificare il prefisso del bot nel server
   - Se te lo dimentichi scrivi `prefisso?`
-- #### Comandi 🛠️
+- #### Comandi generali 🛠️
   - `chisono` rivela la tua vera identità 🙃
   - `scorreggia` fai rischiare le mutande al bot 😬
   - `pinga <@utente> <quantità>` sveglia il tuo amico a suoni di ping
@@ -39,6 +39,8 @@
   - `in_riproduzione` stampa la canzone corrente
   - `volume <0-100>` imposta il volume del bot *(default: 50)*
   - `esci` stoppa la musica e fa uscire il bot **(cancella la coda)**
+- ### Immagini 📷🖼️
+  -  `avatar <utente|nome utente|niente>` ti fa vedere bello in grande l'immagine profilo di un utente
 - ### Info 💁📂
   - `userinfo <@utente>` stampa alcune informazioni su un utente particolare
   - `serverinfo` stampa alcune informazioni sul server discord
@@ -60,4 +62,4 @@
 - [x] Urban Dictionary: Word of the Day
 - [x] Ubran Dictionary: Word definition
 - [x] Image processing *(ci sto lavorando, giuro)*
-- [ ] Meteo
+- [ ] Meteo *(ma è veramente necessario? boh)*
