@@ -64,8 +64,8 @@ def word_to_embed(word):
         word['example'] = word['example'][:1020]+'...'
 
     embed=Embed(title=escape_markdown(word['word']),
-            description=word['meaning'], 
-            url=word['url'], 
+            description=word['meaning'],
+            url=word['url'],
             color=0x134FE6)
     if word['gif']: embed.set_image(url=word['gif'])
     if word['example']: embed.add_field(name='Example:', value=word['example'], inline=False)
@@ -103,10 +103,10 @@ class UrbanDictionary(commands.Cog):
     async def wotd_loop(self):
         wotd_divs = get_divs_from_url("https://www.urbandictionary.com/")
 
-        words_to_send = []  
+        words_to_send = []
         if self.last_word == "":
             words_to_send.append(get_word_from_div(wotd_divs[0], href=True))
-        else:            
+        else:
             for div in wotd_divs:
                 if div.contents[1].text != self.last_word:
                     words_to_send.append(get_word_from_div(div, href=True))
@@ -118,14 +118,15 @@ class UrbanDictionary(commands.Cog):
                 wotd_settings = json.load(file)
                 wotd_settings["last_word"] = self.last_word
             with open('config/wotd_settings.json', 'w') as file:
-                json.dump(wotd_settings, file, indent=4) 
+                json.dump(wotd_settings, file, indent=4)
 
-            for id in wotd_settings["channel_ids"].values():       
+            for id in wotd_settings["channel_ids"].values():
                 channel = self.bot.get_channel(id)
-                if channel is not None: 
-                    await channel.send("**New WOTD dropped**")
-                    for wotd in words_to_send:
-                        await channel.send(embed=word_to_embed(wotd))
+                if channel is not None:
+                    async with channel.trigger_typing():
+                        await channel.send("**New WOTD dropped**")
+                        for wotd in words_to_send:
+                            await channel.send(embed=word_to_embed(wotd))
 
 
 
@@ -133,20 +134,20 @@ class UrbanDictionary(commands.Cog):
     #    loop setup    #
     ####################
     @commands.command(name="set_wotd_channel",help="Pass the channel you want the WOTD to be sent every day")
-    @commands.has_permissions(administrator=True) 
+    @commands.has_permissions(administrator=True)
     async def set_wotd_channel(self, ctx, channel):
         if self.bot.get_channel(int(channel[2:-1])) is None:
-            return await ctx.send(f"Channel passed is not valid or it's hidden from the bot", reference=ctx.message, mention_author=False) 
-            
+            return await ctx.send(f"Channel passed is not valid or it's hidden from the bot", reference=ctx.message, mention_author=False)
+
         with open('config/wotd_settings.json', 'r') as file:
             wotd_settings = json.load(file)
 
         wotd_settings["channel_ids"][str(ctx.guild.id)] = int(channel[2:-1])
 
-        with open('config/wotd_settings.json', 'w') as file: 
+        with open('config/wotd_settings.json', 'w') as file:
             json.dump(wotd_settings, file, indent=4)
 
-        await ctx.send(f'Channel set to: {channel}', reference=ctx.message, mention_author=False) 
+        await ctx.send(f'Channel set to: {channel}', reference=ctx.message, mention_author=False)
 
     @commands.command(name="get_wotd_channel",help="Returns the wotd channel if set")
     @commands.has_permissions(administrator=True)
@@ -163,22 +164,23 @@ class UrbanDictionary(commands.Cog):
             await ctx.send(f'Channel is not set.', reference=ctx.message, mention_author=False)
 
     @commands.command(name="remove_wotd_channel",help="Unset the channel for the WOTD")
-    @commands.has_permissions(administrator=True) 
+    @commands.has_permissions(administrator=True)
     async def remove_wotd_channel(self, ctx):
         with open('config/wotd_settings.json', 'r') as file:
             wotd_settings = json.load(file)
         try:
-            wotd_settings["channel_ids"].pop(str(ctx.guild.id)) 
-            with open('config/wotd_settings.json', 'w') as file: 
+            wotd_settings["channel_ids"].pop(str(ctx.guild.id))
+            with open('config/wotd_settings.json', 'w') as file:
                 json.dump(wotd_settings, file, indent=4)
-            await ctx.send(f'Channel unset', reference=ctx.message, mention_author=False) 
+            await ctx.send(f'Channel unset', reference=ctx.message, mention_author=False)
         except KeyError:
-            await ctx.send(f'The channel for the WOTD is not set', reference=ctx.message, mention_author=False) 
+            await ctx.send(f'The channel for the WOTD is not set', reference=ctx.message, mention_author=False)
 
     @commands.command(name="restart_wotd_loop",help="Restart the WOTD Task")
     @commands.is_owner()
     async def restart_wotd_loop(self, ctx):
         self.wotd_loop.restart()
+        await ctx.message.add_reaction("🆗")
 
 
 
@@ -186,7 +188,8 @@ class UrbanDictionary(commands.Cog):
     #    urbandict commands    #
     ############################
     @commands.command(name="wotd", aliases=["pdg"],help="It tells you the Word of the Day!")
-    async def wotd(self, ctx):  
+    async def wotd(self, ctx):
+        await ctx.trigger_typing()
         wotd_div = get_divs_from_url("https://www.urbandictionary.com/")
         wotd = get_word_from_div(wotd_div[0], True)
         embed = word_to_embed(wotd)
@@ -194,16 +197,18 @@ class UrbanDictionary(commands.Cog):
 
     @commands.command(name="define", aliases=["definisci", "definition", "definizione"],help="Get the urban definition of a word")
     async def definisci(self, ctx, *query):
+        await ctx.trigger_typing()
         query = " ".join(query)
         encodedURL = 'https://www.urbandictionary.com/define.php?term=' + quote(query)
         word_div = get_divs_from_url(encodedURL)
-        if word_div == []: return await ctx.send("**¯\_(ツ)_/¯**\nSorry, we couldn't find the definition of: `"+ query +"`")
+        if word_div == []: return await ctx.send(f"**¯\_(ツ)_/¯**\nSorry, we couldn't find the definition of: `{query}`", reference=ctx.message, mention_author=False)
         word = get_word_from_div(word_div[0], True)
         embed = word_to_embed(word)
-        await ctx.send(embed=embed, reference=ctx.message, mention_author=False)
+        await ctx.send(f"**Definition of:** `{query}`", embed=embed, reference=ctx.message, mention_author=False)
 
     @commands.command(name="rand_word", aliases=["rand_parola", "parola_random", "parola", "word"],help="Feeling lucky? Get a random word")
-    async def rand_word(self, ctx):   
+    async def rand_word(self, ctx):
+        await ctx.trigger_typing()
         word_divs = get_divs_from_url('https://www.urbandictionary.com/random.php?page=' + str(randint(2, 999)))
         word = get_word_from_div(word_divs[randint(0, 6)], True)
         embed = word_to_embed(word)
