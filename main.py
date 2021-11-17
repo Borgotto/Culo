@@ -218,8 +218,8 @@ async def print_console(ctx, *string : str):
 @bot.command(name="public_ip", help="Returns the public ip of the network hosting the bot")
 @commands.is_owner()
 async def public_ip(ctx):
-    await ctx.message.delete()
     await ctx.send(f"`{get('https://ident.me').text}`", delete_after=3)
+    await ctx.message.delete()
 
 
 #####################
