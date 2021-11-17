@@ -31,7 +31,7 @@ class Immagini(commands.Cog):
         embed.set_author(name=user.name+'#'+user.discriminator, url="https://discord.com/users/"+str(user.id), icon_url="https://cdn.discordapp.com"+user.avatar_url._url)
         embed.set_image(url="https://cdn.discordapp.com"+user.avatar_url._url)
 
-        await ctx.send(embed=embed)
+        await ctx.send(embed=embed, reference=ctx.message, mention_author=False)
 
 
 
