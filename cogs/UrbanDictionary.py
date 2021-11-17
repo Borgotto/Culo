@@ -206,7 +206,7 @@ class UrbanDictionary(commands.Cog):
         embed = word_to_embed(word)
         await ctx.send(f"**Definition of:** `{query}`", embed=embed, reference=ctx.message, mention_author=False)
 
-    @commands.command(name="rand_word", aliases=["rand_parola", "parola_random", "parola", "word"],help="Feeling lucky? Get a random word")
+    @commands.command(name="rand_word", aliases=["rand_parola", "parola_random", "random_word", "parola", "word"],help="Feeling lucky? Get a random word")
     async def rand_word(self, ctx):
         await ctx.trigger_typing()
         word_divs = get_divs_from_url('https://www.urbandictionary.com/random.php?page=' + str(randint(2, 999)))
