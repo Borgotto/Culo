@@ -57,7 +57,7 @@ class YTDLSource(PCMVolumeTransformer):
         data = await loop.run_in_executor(None, to_run)
 
         if 'entries' in data:
-            data = data['entries'][0]      
+            data = data['entries'][0]
 
         if add_to_q is True:
             embed = Embed(title="Aggiunto alla coda:", description=f'[{data["title"]}]({data["webpage_url"]}) [{ctx.author.mention}]', color=0xfefefe)
@@ -140,9 +140,9 @@ class Musica(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.players = {}
-    
+
     @commands.Cog.listener()
-    async def on_ready(self):        
+    async def on_ready(self):
         print("Musica caricata!")
 
     async def cleanup(self, guild):
@@ -168,7 +168,7 @@ class Musica(commands.Cog):
             except HTTPException:
                 pass
         elif isinstance(error, InvalidVoiceChannel):
-            await ctx.send('Devi essere in un canale per mettere la musica')
+            await ctx.send('Devi essere in un canale per mettere la musica', reference=ctx.message, mention_author=False)
 
     def get_player(self, ctx):
         try:
@@ -185,8 +185,8 @@ class Musica(commands.Cog):
             channel = ctx.author.voice.channel
         except AttributeError:
             if ctx.author.voice is None:
-                await ctx.send(f"{ctx.author.mention} Devi essere in un canale vocale per mettere la musica")
-            raise InvalidVoiceChannel(f'Nessun canale in cui entrare.')            
+                await ctx.send(f"{ctx.author.mention} Devi essere in un canale vocale per mettere la musica", reference=ctx.message, mention_author=False)
+            raise InvalidVoiceChannel(f'Nessun canale in cui entrare.')
 
         vc = ctx.voice_client
 
@@ -212,7 +212,7 @@ class Musica(commands.Cog):
         await ctx.trigger_typing()
 
         if ctx.author.voice is None:
-            return await ctx.send(f"{ctx.author.mention} Devi essere in un canale vocale per mettere la musica")
+            return await ctx.send(f"{ctx.author.mention} Devi essere in un canale vocale per mettere la musica", reference=ctx.message, mention_author=False)
 
         vc = ctx.voice_client
 
@@ -230,7 +230,7 @@ class Musica(commands.Cog):
         vc = ctx.voice_client
 
         if not vc or not vc.is_playing():
-            return await ctx.send("Non c'è niente in riproduzione!")
+            return await ctx.send("Non c'è niente in riproduzione!", reference=ctx.message, mention_author=False)
         elif vc.is_paused():
             await ctx.invoke(self.resume_)
             return
@@ -243,7 +243,7 @@ class Musica(commands.Cog):
         vc = ctx.voice_client
 
         if not vc or not vc.is_connected():
-            return await ctx.send("Non c'è niente in riproduzione!", )
+            return await ctx.send("Non c'è niente in riproduzione!", reference=ctx.message, mention_author=False)
         elif not vc.is_paused():
             return
 
@@ -255,7 +255,7 @@ class Musica(commands.Cog):
         vc = ctx.voice_client
 
         if not vc or not vc.is_connected():
-            return await ctx.send("Non c'è niente in riproduzione!")
+            return await ctx.send("Non c'è niente in riproduzione!", reference=ctx.message, mention_author=False)
 
         if vc.is_paused():
             pass
@@ -271,7 +271,7 @@ class Musica(commands.Cog):
 
         player = self.get_player(ctx)
         if player.queue.empty():
-            return await ctx.send('Non ci sono canzoni nella coda.')
+            return await ctx.send('Non ci sono canzoni nella coda.', reference=ctx.message, mention_author=False)
 
         #upcoming = list(itertools.islice(player.queue._queue, 0, 5))
         #fmt = '\n'.join(f'[{_["title"]}]({_["webpage_url"]}) [{_["requester"].mention}]' for _ in player.queue._queue)
@@ -283,24 +283,24 @@ class Musica(commands.Cog):
             description += f'{x}) {song["title"]}\n'
         description += '\n\tFine della coda!```'
 
-        await ctx.send(description)
+        await ctx.send(description, reference=ctx.message, mention_author=False)
 
     @commands.command(name='in_riproduzione', aliases=['np', 'current', 'currentsong', 'playing', 'ir'], help="Mostra la canzone in riproduzione")
     async def now_playing_(self, ctx):
         vc = ctx.voice_client
 
         if not vc or not vc.is_connected():
-            return await ctx.send('Non sono connesso a un canale vocale!', )
+            return await ctx.send('Non sono connesso a un canale vocale!', reference=ctx.message, mention_author=False)
 
         player = self.get_player(ctx)
         if not player.current:
-            return await ctx.send("Non c'è niente in riproduzione!")
+            return await ctx.send("Non c'è niente in riproduzione!", reference=ctx.message, mention_author=False)
 
         try:
             await player.np.delete()
         except HTTPException:
             pass
-        
+
         embed = Embed(title="Ora in riproduzione:", description=f'{vc.source.title} [{ctx.author.mention}]', color=0xfefefe)
         player.np = await ctx.send(embed=embed)
 
@@ -309,24 +309,24 @@ class Musica(commands.Cog):
         vc = ctx.voice_client
 
         if not vc or not vc.is_connected():
-            return await ctx.send('Non sono connesso a un canale vocale!', )
+            return await ctx.send('Non sono connesso a un canale vocale!', reference=ctx.message, mention_author=False)
 
         player = self.get_player(ctx)
-        
+
         if vol is None:
             vol = player.volume*100
         elif not 0 < vol < 101:
-            return await ctx.send('Inserisci un valora compreso tra 1 e 100')
+            return await ctx.send('Inserisci un valora compreso tra 1 e 100', reference=ctx.message, mention_author=False)
         elif vc.source:
                 vc.source.volume = vol / 100
-                player.volume = vol / 100     
-        
+                player.volume = vol / 100
+
         if vol >= 80:
             emoji = ':loud_sound:'
         elif 30 < vol < 80:
             emoji = ':sound:'
-        elif vol <=30:            
-            emoji = ':speaker:'   
+        elif vol <=30:
+            emoji = ':speaker:'
 
         embed = Embed(title=f'**Volume:**  {int(vol)}  {emoji}:', color=0xfefefe)
         await ctx.send(embed=embed)
