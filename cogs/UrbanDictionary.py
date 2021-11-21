@@ -123,10 +123,11 @@ class UrbanDictionary(commands.Cog):
             for id in wotd_settings["channel_ids"].values():
                 channel = self.bot.get_channel(id)
                 if channel is not None:
-                    async with channel.trigger_typing():
-                        await channel.send("**New WOTD dropped**")
-                        for wotd in words_to_send:
-                            await channel.send(embed=word_to_embed(wotd))
+                    await channel.trigger_typing()
+                    await channel.send("**New WOTD dropped**")
+                    for wotd in words_to_send:
+                        await channel.trigger_typing()
+                        await channel.send(embed=word_to_embed(wotd))
 
 
 
