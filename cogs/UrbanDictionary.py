@@ -4,7 +4,6 @@ from discord import Embed
 from bs4 import BeautifulSoup, element
 from requests import get as get_html
 from urllib.parse import quote
-import lxml
 from random import randint
 import json
 
@@ -15,7 +14,7 @@ import json
 #given a url from urban dictionary it returns the div elements containing words
 def get_divs_from_url(url):
     html = get_html(url)
-    soup = BeautifulSoup(html.content, "lxml")
+    soup = BeautifulSoup(html.content, "html.parser")
     return soup.find_all('div', class_='def-panel')
 
 #given parent 'div' it returns the concat. of its children's text
