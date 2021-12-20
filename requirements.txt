@@ -1,7 +1,5 @@
-pip
 youtube_dl
 discord.py[voice]
 ffmpeg
 requests
-lxml
 beautifulsoup4
