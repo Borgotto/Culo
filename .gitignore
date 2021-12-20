@@ -1,10 +1,6 @@
-token
-kick_user.pyw
 __pycache__/
 cogs/__pycache__/
-cogs/Screenshot.py
-.vscode/launch.json
-wotd_settings.json
-prefixes.json
+.vscode/
 config/wotd_settings.json
 config/prefixes.json
+token
