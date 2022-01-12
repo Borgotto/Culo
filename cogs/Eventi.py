@@ -21,8 +21,8 @@ class Eventi(commands.Cog):
         if messaggio == 'prefisso?':
             await message.channel.send(f"Il prefisso per i comandi è: `{self.bot.command_prefix(self, message)}`", reference=message, mention_author=False)
 
-        if len(message) == 6 and message.content.isupper():
-            await message.channel.send(f'The channel for the WOTD is not set', reference=message, mention_author=True)
+        if len(messaggio) == 6 and message.content.isupper():
+            await message.channel.send(f'Partitina ad Among Us??', reference=message, mention_author=True)
 
 def setup(bot):
     bot.add_cog(Eventi(bot))
