@@ -59,6 +59,8 @@
 - [x] Loops ***(non ha molti usi al momento)***
 - [x] Musica
 - [x] Urban Dictionary: Word of the Day
-- [x] Ubran Dictionary: Word definition
+- [x] Urban Dictionary: Word definition
 - [x] Image processing *(ci sto lavorando, giuro)*
 - [ ] Meteo *(ma è veramente necessario? boh)*
+
+- Removed Herobrine
