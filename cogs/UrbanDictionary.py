@@ -291,8 +291,8 @@ class UrbanDictionary(commands.Cog):
     @commands.command(name="wotd", aliases=["pdg"],help="It tells you the Word of the Day!")
     async def wotd(self, ctx):
         await ctx.trigger_typing()
-        query = UrbanDictionaryQuery(markdown=True)
-        wotd = query.word
+        ud_query = UrbanDictionaryQuery(markdown=True)
+        wotd = ud_query.word
         embed = word_to_embed(wotd)
         await ctx.send(f"**Here's today's Word of the Day!**",embed=embed, reference=ctx.message, mention_author=False)
 
@@ -300,8 +300,8 @@ class UrbanDictionary(commands.Cog):
     async def definisci(self, ctx, *query):
         await ctx.trigger_typing()
         query = " ".join(query)
-        query = UrbanDictionaryQuery(query=query, markdown=True)
-        definition = query.word
+        ud_query = UrbanDictionaryQuery(query=query, markdown=True)
+        definition = ud_query.word
         if definition is None: return await ctx.send(f"**¯\_(ツ)_/¯**\nSorry, we couldn't find the definition of: `{query}`", reference=ctx.message, mention_author=False)
         embed = word_to_embed(definition)
         await ctx.send(f"**Definition of:** `{query}`", embed=embed, reference=ctx.message, mention_author=False)
@@ -309,8 +309,8 @@ class UrbanDictionary(commands.Cog):
     @commands.command(name="rand_word", aliases=["rand_parola", "parola_random", "random_word", "parola", "word"],help="Feeling lucky? Get a random word")
     async def rand_word(self, ctx):
         await ctx.trigger_typing()
-        query = UrbanDictionaryQuery(random=True, markdown=True)
-        definition = query.word
+        ud_query = UrbanDictionaryQuery(random=True, markdown=True)
+        definition = ud_query.word
         embed = word_to_embed(definition)
         await ctx.send(f"**Here's a random word from Urban Dictionary**",embed=embed, reference=ctx.message, mention_author=False)
 
