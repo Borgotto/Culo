@@ -1,9 +1,11 @@
 from discord.ext import commands, tasks
 from discord.utils import escape_markdown, get
 from discord import Embed
+
+import requests
+import urllib.parse
 from bs4 import BeautifulSoup, element
-from requests import get as get_html
-from urllib.parse import quote
+import lxml
 from random import randint
 import json
 
@@ -11,64 +13,189 @@ import json
 #    auxiliary functions    #
 #############################
 
-#given a url from urban dictionary it returns the div elements containing words
-def get_divs_from_url(url):
-    html = get_html(url)
-    soup = BeautifulSoup(html.content, "html.parser")
-    return soup.find_all('div', class_='def-panel')
+def _get_string_from_div(div: element.Tag, markdown: bool = False):
+    string = ""
+    for child in div.children:
+        if markdown:
+            text = escape_markdown(child.text)
+        else:
+            text = child.text
 
-#given parent 'div' it returns the concat. of its children's text
-#set 'href' to True if you want hrefs to be included in the string
-def get_str_from_div(div, href=False, string=""):
-    for content in div.contents:
-        if type(content) is element.NavigableString:
-            string += escape_markdown(content)
-        elif type(content) is element.Tag and content.name == 'a' and 'href' in content.attrs:
-            if href is True:
-                string += '['+escape_markdown(content.text)+'](https://www.urbandictionary.com'+content.attrs['href']+')'
-            else:
-                string += escape_markdown(content.text)
-        elif type(content) is element.Tag and content.name == 'br':
-            string += '\n'
-    return string.replace("\r","")
+        if isinstance(child, element.Tag) and child.name == "a" and markdown:
+            string += (f"[{text}]" +
+                        "(https://www.urbandictionary.com" +
+                       f"{child.attrs['href']})")
+        elif isinstance(child, element.Tag) and child.name == "br":
+            string += "\n"
+        else:
+            string += text
+    return string
 
-#given the WOTD div it returns Info on that Word Of The Day
-def get_word_from_div(div, href=False):
-    day = div.contents[0].text
-    word = div.contents[1].text
-    url = 'https://www.urbandictionary.com'+div.contents[1].contents[0].attrs['href']
-    meaning = get_str_from_div(div.contents[2], href=href)
-    example = get_str_from_div(div.contents[3], href=href)
+def get_words_from_url(url: str, markdown: bool = False):
+    # Static Session object
+    try:
+        session = get_words_from_url.session
+    except AttributeError:
+        session = get_words_from_url.session = requests.Session()
 
-    gif = contributor = ""
-    if div.contents[4].attrs['class'][0] == 'gif':
-        gif = div.contents[4].contents[0].contents[0].attrs['src']
-        contributor = get_str_from_div(div.contents[5], href=False)
-    elif div.contents[4].attrs['class'][0] == 'contributor':
-        contributor = get_str_from_div(div.contents[4], href=False)
+    # Fetch all of the html divs containing the words definitions
+    response = session.get(url)
+    soup = BeautifulSoup(response.content, "lxml")
+    divs = soup.findAll("div", class_="definition")
+    words: list[Word] = []
 
-    return {'day': day, 'word': word, 'url': url, 'meaning': meaning, 'example': example, 'gif': gif, 'contributor': contributor}
+    # Foreach definition div extract the Word and append it to the list
+    for div in divs:
+        word_divs = div.contents[0].contents
+        word = Word(url="https://www.urbandictionary.com" +
+                        word_divs[0].contents[0].contents[0].attrs["href"],
+                    name=_get_string_from_div(word_divs[0], markdown),
+                    meaning=_get_string_from_div(word_divs[1], markdown),
+                    example=_get_string_from_div(word_divs[2], markdown),
+                    contributor=_get_string_from_div(word_divs[3], False))
+        words.append(word)
+    return words
+
+class Word:
+    def __init__(
+                 self,
+                 url: str,
+                 name: str,
+                 meaning: str,
+                 example: str,
+                 contributor: str):
+        self.url = url
+        self.name = name
+        self.meaning = meaning
+        self.example = example
+        self.contributor = contributor
+
+    def __eq__(self, __o: object) -> bool:
+        try:
+            return (self.url == __o.url and
+                    self.name == __o.name and
+                    self.meaning == __o.meaning and
+                    self.example == __o.example)
+        except AttributeError:
+            return False
+
+class UrbanDictionaryQuery:
+    def __init__(
+                self,
+                query: str = None,
+                random: bool = False,
+                markdown: bool = False,
+                caching: bool = True):
+        self.query = query.strip() if query and query.strip() else None
+        self.is_random = random if not self.query else False
+        self.is_markdown = markdown
+        self.is_caching = caching
+        self.word_index = 0
+        self.page_index = 1
+        self.pages: dict[int,list[Word]] = {}  # Empty if not is_caching
+
+    @property
+    def url(self):
+        url = "https://www.urbandictionary.com/"
+        if self.query:
+            url += f"define.php?term={urllib.parse.quote(self.query)}&"
+        elif self.is_random:
+            url += "random.php?"
+        else:
+            url += "?"
+        return url + f"page={self.page_index}"
+
+    @property
+    def word(self):
+        try:
+            return self.page[self.word_index]
+        except IndexError:
+            return None
+
+    @property
+    def page(self):
+        page = (self.pages.get(self.page_index) or
+                get_words_from_url(self.url, self.is_markdown))
+        if self.is_caching:
+            self.pages[self.page_index] = page
+        return page
+
+    @property
+    def has_previous_page(self):
+        return self.is_random or self.page_index > 1
+
+    @property
+    def has_previous_word(self):
+        return self.word_index > 0 or self.has_previous_page
+
+    @property
+    def has_next_page(self):
+        self.page_index += 1
+        next_page = self.page
+        self.page_index -= 1
+        return self.is_random or len(next_page) > 0
+
+    @property
+    def has_next_word(self):
+        return self.word_index < len(self.page)-1 or self.has_next_page
+
+    def go_to_previous_page(self):
+        if not self.has_previous_page:
+            raise StopIteration("There isn't a Page prior to the current one")
+
+        self.word_index = 0
+        self.page_index -= 1
+        return self.page
+
+    def go_to_previous_word(self):
+        if not self.has_previous_word:
+            raise StopIteration("There isn't a Word prior to the current one")
+
+        if self.word_index > 0:
+            self.word_index -= 1
+        else:
+            self.go_to_previous_page()
+            self.word_index = len(self.page)-1
+        return self.word
+
+    def go_to_next_page(self):
+        if not self.has_next_page:
+            raise StopIteration("There isn't a Page after the current one")
+
+        self.word_index = 0
+        self.page_index += 1
+        return self.page
+
+    def go_to_next_word(self):
+        if not self.has_next_word:
+            raise StopIteration("There isn't a Word after the current one")
+
+        if self.word_index < len(self.page)-1:
+            self.word_index += 1
+        else:
+            self.go_to_next_page()
+        return self.word
+
 
 #given word it returns the embed ready to be sent
-def word_to_embed(word):
-    if len(word['word']) > 255:
-        word['word'] = word['word'][:251]+'...'
+def word_to_embed(word : Word):
+    if len(word.name) > 255:
+        word.name = word.name[:251]+'...'
 
-    if len(word['meaning']) > 4095:
-        word['meaning'] = word['meaning'][:3700]
-        word['meaning'] = word['meaning'].rsplit(' ', 2)[0]
-        word['meaning'] += ' [...]\n[(open in the browser for the complete definition)]('+word['url']+')'
+    if len(word.meaning) > 4095:
+        word.meaning = word.meaning[:3700]
+        word.meaning = word.meaning.rsplit(' ', 2)[0]
+        word.meaning += ' [...]\n[(open in the browser for the complete definition)]('+word.url+')'
 
-    if len(word['example']) > 1023:
-        word['example'] = word['example'][:1020]+'...'
+    if len(word.example) > 1023:
+        word.example = word.example[:1020]+'...'
 
-    embed=Embed(title=escape_markdown(word['word']),
-            description=word['meaning'],
-            url=word['url'],
+    embed=Embed(title=escape_markdown(word.name),
+            description=word.meaning,
+            url=word.url,
             color=0x134FE6)
-    if word['gif']: embed.set_image(url=word['gif'])
-    if word['example']: embed.add_field(name='Example:', value=word['example'], inline=False)
-    embed.set_footer(text='Definition '+word['contributor'])
+    if word.example: embed.add_field(name='Example:', value=word.example, inline=False)
+    embed.set_footer(text='Definition '+word.contributor)
     return embed
 
 
@@ -100,33 +227,7 @@ class UrbanDictionary(commands.Cog):
     #sends the wotd every day in the channels from wotd_settings.json
     @tasks.loop(minutes=9)
     async def wotd_loop(self):
-        wotd_divs = get_divs_from_url("https://www.urbandictionary.com/")
-
-        words_to_send = []
-        if self.last_word == "":
-            words_to_send.append(get_word_from_div(wotd_divs[0], href=True))
-        else:
-            for div in wotd_divs:
-                if div.contents[1].text != self.last_word:
-                    words_to_send.append(get_word_from_div(div, href=True))
-                else: break
-
-        if 0 < len(words_to_send) < 6:
-            self.last_word = wotd_divs[0].contents[1].text
-            with open('config/wotd_settings.json', 'r') as file:
-                wotd_settings = json.load(file)
-                wotd_settings["last_word"] = self.last_word
-            with open('config/wotd_settings.json', 'w') as file:
-                json.dump(wotd_settings, file, indent=4)
-
-            for id in wotd_settings["channel_ids"].values():
-                channel = self.bot.get_channel(id)
-                if channel is not None:
-                    await channel.trigger_typing()
-                    await channel.send("**New WOTD dropped**")
-                    for wotd in words_to_send:
-                        await channel.trigger_typing()
-                        await channel.send(embed=word_to_embed(wotd))
+        pass
 
 
 
@@ -190,8 +291,8 @@ class UrbanDictionary(commands.Cog):
     @commands.command(name="wotd", aliases=["pdg"],help="It tells you the Word of the Day!")
     async def wotd(self, ctx):
         await ctx.trigger_typing()
-        wotd_div = get_divs_from_url("https://www.urbandictionary.com/")
-        wotd = get_word_from_div(wotd_div[0], True)
+        query = UrbanDictionaryQuery(markdown=True)
+        wotd = query.word
         embed = word_to_embed(wotd)
         await ctx.send(f"**Here's today's Word of the Day!**",embed=embed, reference=ctx.message, mention_author=False)
 
@@ -199,19 +300,18 @@ class UrbanDictionary(commands.Cog):
     async def definisci(self, ctx, *query):
         await ctx.trigger_typing()
         query = " ".join(query)
-        encodedURL = 'https://www.urbandictionary.com/define.php?term=' + quote(query)
-        word_div = get_divs_from_url(encodedURL)
-        if word_div == []: return await ctx.send(f"**¯\_(ツ)_/¯**\nSorry, we couldn't find the definition of: `{query}`", reference=ctx.message, mention_author=False)
-        word = get_word_from_div(word_div[0], True)
-        embed = word_to_embed(word)
+        query = UrbanDictionaryQuery(query=query, markdown=True)
+        definition = query.word
+        if definition is None: return await ctx.send(f"**¯\_(ツ)_/¯**\nSorry, we couldn't find the definition of: `{query}`", reference=ctx.message, mention_author=False)
+        embed = word_to_embed(definition)
         await ctx.send(f"**Definition of:** `{query}`", embed=embed, reference=ctx.message, mention_author=False)
 
     @commands.command(name="rand_word", aliases=["rand_parola", "parola_random", "random_word", "parola", "word"],help="Feeling lucky? Get a random word")
     async def rand_word(self, ctx):
         await ctx.trigger_typing()
-        word_divs = get_divs_from_url('https://www.urbandictionary.com/random.php?page=' + str(randint(2, 999)))
-        word = get_word_from_div(word_divs[randint(0, 6)], True)
-        embed = word_to_embed(word)
+        query = UrbanDictionaryQuery(random=True, markdown=True)
+        definition = query.word
+        embed = word_to_embed(definition)
         await ctx.send(f"**Here's a random word from Urban Dictionary**",embed=embed, reference=ctx.message, mention_author=False)
 
 
