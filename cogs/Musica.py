@@ -19,6 +19,7 @@ ytdlopts = {
     'quiet': True,
     'no_warnings': True,
     'default_search': 'auto',
+    'cookiefile': '~/.youtubecookies',
     'source_address': '0.0.0.0'  # ipv6 addresses cause issues sometimes
 }
 
