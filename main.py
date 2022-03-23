@@ -193,20 +193,25 @@ async def on_command_error(ctx, error):
 ############################
 #    debugging commands    #
 ############################
-@bot.command(name="purge", help="Deletes # of the messages sent by the bot")
+@bot.command(name="purge", help="Deletes # of the messages sent by the bot in the channel")
 @commands.is_owner()
 async def purge(ctx, amount : int = 7):
     for i in range(amount):
         await discord.utils.get(await ctx.channel.history(limit=100).flatten(), author=bot.user).delete()
 
-@bot.command(name="test_errore", help="Genera un errore")
+@bot.command(name="test_error", help="Generate a generic error")
 @commands.is_owner()
 async def errore(ctx):
     raise commands.ArgumentParsingError
 
-@bot.command(name="test_messaggio", help="Prova a mandare un messaggio in un canale specifico")
+@bot.command(name="test_messagge", help="Send a message to a specific channel")
 @commands.is_owner()
-async def test_messaggio(ctx, channel):
+async def test_messagge(ctx, channel, *string : str):
+    pass
+
+@bot.command(name="test_delete", help="Delete a specific message")
+@commands.is_owner()
+async def test_messagge(ctx, messageId):
     pass
 
 @bot.command(name="print", help="Print something on stdout")
