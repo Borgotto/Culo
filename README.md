@@ -1,7 +1,11 @@
 # 🍑 **Culo** 🍑
+
 #### Il bot di Discord più inutile del mondo *(o almeno lo era all'inizio dello sviluppo)*.
-#### Nato come scherzo tra amici, è cresciuto e diventato un vero e proprio bot 
-##
+#### Nato come scherzo tra amici, è cresciuto e diventato un vero e proprio bot
+[![Python 3.9 ](https://github.com/Borgotto/Culo/actions/workflows/test-python-app.yml/badge.svg)](https://github.com/Borgotto/Culo/actions/workflows/test-python-app.yml)
+![](https://dcbadge.vercel.app/api/shield/593096925947887648?bot=true&style=flat)
+![](https://dcbadge.vercel.app/api/shield/289887222310764545?style=flat)
+
 ### Requisiti:
 - [Python 3.9+](https://www.python.org/downloads/)
 - Un [token](https://discord.com/developers/applications) per il bot
@@ -11,6 +15,7 @@
 - [BeautifulSoup 4.9+](https://www.crummy.com/software/BeautifulSoup/bs4/doc/#installing-beautiful-soup)
 - [lxml](https://lxml.de/index.html#download)
 ##
+
 ### **Features:**
 - #### Prefisso del bot dinamico e modificabile server per server *(default:* 🍑 *)*
   - Basta scrivere `🍑prefisso <il prefisso>` per modificare il prefisso del bot nel server
@@ -48,6 +53,7 @@
 - #### Loops ⌚🔄
   - Ogni tot minuti il bot esegue qualche comando ⏰
 ##
+
 ### To-Do List
 #### Cose da aggiungere al bot:
 - [x] Prefissi
