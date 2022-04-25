@@ -9,6 +9,7 @@
 - [youtube_dl](https://youtube-dl.org/)
 - [ffmpeg](https://ffmpeg.org/download.html)
 - [BeautifulSoup 4.9+](https://www.crummy.com/software/BeautifulSoup/bs4/doc/#installing-beautiful-soup)
+- [lxml](https://lxml.de/index.html#download)
 ##
 ### **Features:**
 - #### Prefisso del bot dinamico e modificabile server per server *(default:* 🍑 *)*

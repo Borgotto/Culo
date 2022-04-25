@@ -3,3 +3,4 @@ discord.py[voice]
 ffmpeg
 requests
 beautifulsoup4
+lxml
