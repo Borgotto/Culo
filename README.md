@@ -5,7 +5,7 @@
 ### Requisiti:
 - [Python 3.9+](https://www.python.org/downloads/)
 - Un [token](https://discord.com/developers/applications) per il bot
-- [Discord.py Rewrite](https://discordpy.readthedocs.io/en/latest/)
+- [Discord.py 2.0](https://github.com/Rapptz/discord.py)
 - [youtube_dl](https://youtube-dl.org/)
 - [ffmpeg](https://ffmpeg.org/download.html)
 - [BeautifulSoup 4.9+](https://www.crummy.com/software/BeautifulSoup/bs4/doc/#installing-beautiful-soup)
@@ -25,9 +25,6 @@
   - `wotd` ti fa sapere qual è la parola del giorno 📜
   - `parola_random` ti da la definizione di una parola totalmente a caso 🤣
   - `definisci <parola>` ti da la definizione della parola/frase passata
-  - `set_wotd_channel <canale>` imposta il canale dove la pdg verrà inviata automaticamente **(solo per amministratori)**
-  - `remove_wotd_channel` rimuove il canale dalla pdg automatica **(solo per amministratori)**
-  - `restart_wotd_loop` riavvia il ciclo della parola del giorno **(solo per il proprietario del bot)**
 - #### Musica 🎼🎵🎶
   - `connetti` per far entrare il bot nel canale vocale in cui ti trovi
   - `play <canzone>` per riprodurre una canzone
