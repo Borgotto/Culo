@@ -12,17 +12,18 @@ class Loops(commands.Cog):
 
     @commands.Cog.listener()
     async def on_ready(self):
-        self.fabio.start()
+        self.nicknames.start()
         #self.oraesatta.start()
         print("Loop caricati!")
 
-    #Loop per rinominare Fabio.exe ( id = 192261771380260864 )
+    #Loop per rinominare alcuni utenti
     @tasks.loop(minutes=10)
-    async def fabio(self):
-        estensioni = ["ciruzzo","napoli","struzzo","discord","vodkaredbull","sburrino","carry","fbi","alifana","azz","storto","doblo'","arrosto","cozze","sfiga","polentone","dove","7z","aac","apk","appx","arc","ass","bin","c","xaml","deb","dn","egg","exe","gbp","gbs","gif","gzip","html","jpg","jar","oar","osz","pak","php","pyk","py","pyw","rar","sb","tar","uha","viv","zip","iso","img","cad","dwg","gba","std","js","css","psd","ans","asc","doc","docx","log","pdf","xml","xhtml","xps","ico","bmp","jpeg","png","sym","url","os","dos","root","bat","cpp","c#","lua","obj","wav","mpeg","avi","flv","ogg","webm","nds","3ds","cia","cur","bak","raw","borgo",""]
-        fabio = get(self.bot.get_all_members(), id=192261771380260864)
-
-        await fabio.edit(nick=fabio.display_name.split(".")[0]+'.'+random.choice(estensioni))
+    async def nicknames(self):
+        extensions = ["ciruzzo","napoli","struzzo","discord","vodkaredbull","sburrino","carry","fbi","alifana","azz","storto","doblo'","arrosto","cozze","sfiga","polentone","dove","7z","aac","apk","appx","arc","ass","bin","c","xaml","deb","dn","egg","exe","gbp","gbs","gif","gzip","html","jpg","jar","oar","osz","pak","php","pyk","py","pyw","rar","sb","tar","uha","viv","zip","iso","img","cad","dwg","gba","std","js","css","psd","ans","asc","doc","docx","log","pdf","xml","xhtml","xps","ico","bmp","jpeg","png","sym","url","os","dos","root","bat","cpp","c#","lua","obj","wav","mpeg","avi","flv","ogg","webm","nds","3ds","cia","cur","bak","raw","borgo",""]
+        members = self.bot.get_all_members()
+        users_to_rename = {"fabio": get(members, id=192261771380260864), "cricchio": get(members, id=757523347813957704)}
+        for user in users_to_rename.values():
+            await user.edit(nick=user.display_name.split(".")[0]+'.'+random.choice(extensions))
 
     @tasks.loop(seconds=59)
     async def oraesatta(self):
