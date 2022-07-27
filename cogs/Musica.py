@@ -2,7 +2,10 @@ import itertools
 import asyncio
 from async_timeout import timeout
 from functools import partial
-from youtube_dl import YoutubeDL
+try:
+    from yt_dlp import YoutubeDL  # try to import yt-dlp fork
+except ImportError:
+    from youtube_dl import YoutubeDL  # or use legacy youtube-dl
 from discord.ext import commands
 from discord import Embed, FFmpegPCMAudio, HTTPException, PCMVolumeTransformer, Color
 
