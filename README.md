@@ -10,7 +10,7 @@
 - [Python 3.9+](https://www.python.org/downloads/)
 - Un [token](https://discord.com/developers/applications) per il bot
 - [Discord.py 2.0](https://github.com/Rapptz/discord.py)
-- [youtube_dl](https://youtube-dl.org/)
+- [youtube_dl](https://youtube-dl.org/) o [yt-dlp](https://github.com/yt-dlp/yt-dlp)
 - [ffmpeg](https://ffmpeg.org/download.html)
 - [BeautifulSoup 4.9+](https://www.crummy.com/software/BeautifulSoup/bs4/doc/#installing-beautiful-soup)
 - [lxml](https://lxml.de/index.html#download)
