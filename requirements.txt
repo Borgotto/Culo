@@ -1,6 +1,3 @@
-youtube_dl
+yt-dlp
 discord.py[voice]
 ffmpeg
-requests
-beautifulsoup4
-lxml

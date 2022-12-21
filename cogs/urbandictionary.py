@@ -1,17 +1,12 @@
-from discord.ext import commands, tasks
-from discord.utils import escape_markdown, get
-from discord import Embed
+import discord
+from discord.ext import commands
+from discord import app_commands, Interaction
+from discord.utils import escape_markdown
 
 import requests
 import urllib.parse
 from bs4 import BeautifulSoup, element
-import lxml
-from random import randint
-import json
 
-#############################
-#    auxiliary functions    #
-#############################
 
 def _get_string_from_div(div: element.Tag, markdown: bool = False):
     string = ""
@@ -24,7 +19,7 @@ def _get_string_from_div(div: element.Tag, markdown: bool = False):
         if isinstance(child, element.Tag) and child.name == "a" and markdown:
             string += (f"[{text}]" +
                         "(https://www.urbandictionary.com" +
-                       f"{child.attrs['href']})")
+                        f"{child.attrs['href']})")
         elif isinstance(child, element.Tag) and child.name == "br":
             string += "\n"
         else:
@@ -176,7 +171,6 @@ class UrbanDictionaryQuery:
             self.go_to_next_page()
         return self.word
 
-
 #given word it returns the embed ready to be sent
 def word_to_embed(word : Word):
     if len(word.name) > 255:
@@ -190,7 +184,7 @@ def word_to_embed(word : Word):
     if len(word.example) > 1023:
         word.example = word.example[:1020]+'...'
 
-    embed=Embed(title=escape_markdown(word.name),
+    embed=discord.Embed(title=escape_markdown(word.name),
             description=word.meaning,
             url=word.url,
             color=0x134FE6)
@@ -199,122 +193,41 @@ def word_to_embed(word : Word):
     return embed
 
 
-
-###################
-#    cog class    #
-###################
-class UrbanDictionary(commands.Cog):
+class UrbanDictionary(commands.Cog, name="urbandictionary"):
     def __init__(self, bot):
         self.bot = bot
-        self.last_word = ""
-        try:
-            with open('config/wotd_settings.json', 'r') as file:
-                self.last_word = json.load(file)["last_word"]
-        except IOError:
-            with open('config/wotd_settings.json', 'w') as file:
-                json.dump({"last_word": "","channel_ids": {}}, file, indent=4)
 
-    @commands.Cog.listener()
-    async def on_ready(self):
-        self.wotd_loop.start()
-        print("Urban Dictionary caricato!")
-
-
-
-    ###################
-    #    wotd loop    #
-    ###################
-    #sends the wotd every day in the channels from wotd_settings.json
-    @tasks.loop(minutes=9)
-    async def wotd_loop(self):
-        pass
-
-
-
-    ####################
-    #    loop setup    #
-    ####################
-    @commands.command(name="set_wotd_channel",help="Pass the channel you want the WOTD to be sent every day")
-    @commands.has_permissions(administrator=True)
-    async def set_wotd_channel(self, ctx, channel):
-        if self.bot.get_channel(int(channel[2:-1])) is None:
-            return await ctx.send(f"Channel passed is not valid or it's hidden from the bot", reference=ctx.message, mention_author=False)
-
-        with open('config/wotd_settings.json', 'r') as file:
-            wotd_settings = json.load(file)
-
-        wotd_settings["channel_ids"][str(ctx.guild.id)] = int(channel[2:-1])
-
-        with open('config/wotd_settings.json', 'w') as file:
-            json.dump(wotd_settings, file, indent=4)
-
-        await ctx.send(f'Channel set to: {channel}', reference=ctx.message, mention_author=False)
-
-    @commands.command(name="get_wotd_channel",help="Returns the wotd channel if set")
-    @commands.has_permissions(administrator=True)
-    async def get_wotd_channel(self, ctx):
-        with open('config/wotd_settings.json', 'r') as file:
-            wotd_settings = json.load(file)
-
-        wotd_channel_id = wotd_settings["channel_ids"].get(str(ctx.guild.id))
-        wotd_channel = get(ctx.guild.text_channels, id=wotd_channel_id)
-
-        if wotd_channel:
-            await ctx.send(f'Channel currently set to: {wotd_channel.mention}', reference=ctx.message, mention_author=False)
-        else:
-            await ctx.send(f'Channel is not set.', reference=ctx.message, mention_author=False)
-
-    @commands.command(name="remove_wotd_channel",help="Unset the channel for the WOTD")
-    @commands.has_permissions(administrator=True)
-    async def remove_wotd_channel(self, ctx):
-        with open('config/wotd_settings.json', 'r') as file:
-            wotd_settings = json.load(file)
-        try:
-            wotd_settings["channel_ids"].pop(str(ctx.guild.id))
-            with open('config/wotd_settings.json', 'w') as file:
-                json.dump(wotd_settings, file, indent=4)
-            await ctx.send(f'Channel unset', reference=ctx.message, mention_author=False)
-        except KeyError:
-            await ctx.send(f'The channel for the WOTD is not set', reference=ctx.message, mention_author=False)
-
-    @commands.command(name="restart_wotd_loop",help="Restart the WOTD Task")
-    @commands.is_owner()
-    async def restart_wotd_loop(self, ctx):
-        self.wotd_loop.restart()
-        await ctx.message.add_reaction("🆗")
-
-
-
-    ############################
-    #    urbandict commands    #
-    ############################
-    @commands.command(name="wotd", aliases=["pdg"],help="It tells you the Word of the Day!")
-    async def wotd(self, ctx):
-        await ctx.trigger_typing()
+    @app_commands.command(name='wotd')
+    async def wotd(self, i: Interaction):
+        """Get the Word of the Day from Urban Dictionary"""
+        await i.response.defer(thinking=True)
         ud_query = UrbanDictionaryQuery(markdown=True)
         wotd = ud_query.word
         embed = word_to_embed(wotd)
-        await ctx.send(f"**Here's today's Word of the Day!**",embed=embed, reference=ctx.message, mention_author=False)
+        await i.edit_original_response(content=f"**Here's today's Word of the Day!**",embed=embed)
 
-    @commands.command(name="define", aliases=["definisci", "definition", "definizione"],help="Get the urban definition of a word")
-    async def definisci(self, ctx, *query):
-        await ctx.trigger_typing()
+    @app_commands.command(name='define')
+    @app_commands.describe(query="The word you want the definition of")
+    async def define(self, i: Interaction, query: str):
+        """Get the definition of a word from Urban Dictionary"""
+        await i.response.defer(thinking=True)
         query = " ".join(query)
         ud_query = UrbanDictionaryQuery(query=query, markdown=True)
         definition = ud_query.word
-        if definition is None: return await ctx.send(f"**¯\_(ツ)_/¯**\nSorry, we couldn't find the definition of: `{query}`", reference=ctx.message, mention_author=False)
+        if definition is None:
+            return await i.edit_original_response(content=f"**¯\_(ツ)_/¯**\nSorry, we couldn't find the definition of: `{query}`")
         embed = word_to_embed(definition)
-        await ctx.send(f"**Definition of:** `{query}`", embed=embed, reference=ctx.message, mention_author=False)
+        await i.edit_original_response(content=f"**Definition of:** `{query}`", embed=embed)
 
-    @commands.command(name="rand_word", aliases=["rand_parola", "parola_random", "random_word", "parola", "word"],help="Feeling lucky? Get a random word")
-    async def rand_word(self, ctx):
-        await ctx.trigger_typing()
+    @app_commands.command(name='random_word')
+    async def random_word(self, i: Interaction):
+        """Get a random word from Urban Dictionary"""
+        await i.response.defer(thinking=True)
         ud_query = UrbanDictionaryQuery(random=True, markdown=True)
         definition = ud_query.word
         embed = word_to_embed(definition)
-        await ctx.send(f"**Here's a random word from Urban Dictionary**",embed=embed, reference=ctx.message, mention_author=False)
+        await i.edit_original_response(content=f"**Here's a random word from Urban Dictionary**",embed=embed)
 
 
-
-def setup(bot):
-    bot.add_cog(UrbanDictionary(bot))
+async def setup(bot):
+    await bot.add_cog(UrbanDictionary(bot))
