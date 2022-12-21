@@ -40,6 +40,4 @@ jobs:
       env:
         TOKEN: ${{ secrets.TOKEN }}
       run: |
-        git clone https://github.com/Rapptz/discord.py
-        python -m pip install -U discord.py[voice]
-        python main.py
+        timeout 60 python main.py || code=$?; if [[ $code -ne 124 && $code -ne 0 ]]; then exit $code; fi
