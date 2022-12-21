@@ -5,7 +5,6 @@ import asyncio
 import discord
 from discord.ext import commands
 
-
 class Bot(commands.Bot):
     def __init__(self, config: dict):
         super().__init__(command_prefix=commands.when_mentioned,
@@ -17,7 +16,9 @@ class Bot(commands.Bot):
 
     async def setup_hook(self):
         # Load all cogs
-        [await self.load_extension(f'cogs.{filename[:-3]}') for filename in os.listdir('./cogs') if filename.endswith('.py')]
+        for filename in os.listdir('./cogs'):
+            if filename.endswith('.py'):
+                await self.load_extension(f'cogs.{filename[:-3]}')
         # Sync commands tree
         await self.tree.sync()
 
@@ -27,8 +28,10 @@ def main():
         config = json.load(config_file)
     # Create the bot
     bot = Bot(config)
+    # Get the token from the config file or the environment variable
+    token = config.get('token', os.environ.get('TOKEN'))
     # Run the bot
-    bot.run(config['token'])
+    bot.run(token)
 
 if __name__ == '__main__':
     asyncio.run(main())
