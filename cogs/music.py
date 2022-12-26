@@ -243,10 +243,6 @@ class Music(commands.Cog, name="music"):
         vc.stop()
         await i.response.send_message("Skipped 🆗")
 
-        player = self.get_player(i)
-        if player.queue.empty():
-            await vc.disconnect()
-
     @app_commands.command(name='stop')
     async def stop_(self, i: Interaction):
         """Stop playing music and clear the queue"""
