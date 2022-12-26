@@ -211,7 +211,6 @@ class UrbanDictionary(commands.Cog, name="urbandictionary"):
     async def define(self, i: Interaction, query: str):
         """Get the definition of a word from Urban Dictionary"""
         await i.response.defer(thinking=True)
-        query = " ".join(query)
         ud_query = UrbanDictionaryQuery(query=query, markdown=True)
         definition = ud_query.word
         if definition is None:
