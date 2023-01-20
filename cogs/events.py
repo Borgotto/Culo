@@ -29,6 +29,12 @@ class Events(commands.Cog, name='events'):
         if content in replies:
             await message.channel.send(replies[content], reference=message, mention_author=False)
 
+    @commands.Cog.listener()
+    async def on_member_update(self, before, after):
+        # Prevent timeouts from being applied to bot authors
+        if (after.id in self.bot.owner_ids and after.timed_out_until):
+            await after.timeout(None)
+
 
 async def setup(bot):
     await bot.add_cog(Events(bot))
