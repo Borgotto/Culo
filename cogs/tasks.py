@@ -38,20 +38,22 @@ class Tasks(commands.Cog, name='tasks'):
     async def oraesatta(self):
         with open('./config/ora_esatta.json', 'r') as f:
             ora_esatta_config = json.load(f)
+            sponsor = random.choice(ora_esatta_config['sponsors'])
+            channels_id = ora_esatta_config['channels_id']
+            video_url = ora_esatta_config['video_url']
+            time = datetime.datetime.now().strftime('%H:%M')
 
-        sponsor = random.choice(ora_esatta_config['sponsors'])
-
-        async with aiohttp.ClientSession() as session:
-            async with session.get(ora_esatta_config['video_url']) as resp:
+        async with aiohttp.ClientSession() as http_session:
+            async with http_session.get(video_url) as resp:
                 video = await resp.read()
 
-        with io.BytesIO(video) as file:
-            for id in ora_esatta_config['channels_id']:
+        with io.BytesIO(video) as video_file:
+            for id in channels_id:
                 channel = self.bot.get_channel(id)
-                if channel is None: continue
+                if channel is None: continue # Skip invalid channel id
                 await channel.send(f"L'ora esatta è offerta da: **{sponsor}**\
-                                   \nSono le **{datetime.datetime.now().strftime('%H:%M')}**",
-                                    file=discord.File(file, filename='oraesatta.mp4'))
+                                   \nSono le **{time}**",
+                                    file=discord.File(video_file, filename='ora_esatta.mp4'))
 
 
 async def setup(bot):
