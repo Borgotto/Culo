@@ -320,7 +320,7 @@ class Music(commands.Cog, name="music"):
     async def on_voice_state_update(self, member, before, after):
         """Resume the player if the bot is moved to a new channel"""
         vc = member.guild.voice_client
-        if vc is None: return
+        if vc is None or member.voice is None: return
 
         if self.bot.user.id in [m.id for m in member.voice.channel.members]:
             retry = 0
