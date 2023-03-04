@@ -1,6 +1,7 @@
 import asyncio
 from async_timeout import timeout
 from functools import partial
+from urllib.parse import urlparse, quote
 try:
     from yt_dlp import YoutubeDL  # try to import yt-dlp fork
 except ImportError:
@@ -54,8 +55,21 @@ class YTDLSource(PCMVolumeTransformer):
         return self.__getattribute__(item)
 
     @classmethod
+    def uri_validator(cls, x):
+        try:
+            result = urlparse(x)
+            return all([result.scheme, result.netloc])
+        except:
+            return False
+
+    @classmethod
     async def create_source(cls, i: Interaction, search: str, *, loop, download=False, add_to_q=True):
         loop = loop or asyncio.get_event_loop()
+
+        # If search is not a URL, url encode it
+        if YTDLSource.uri_validator(search) is False:
+            for char in ['/', ':']:
+                search = search.replace(char, ' ')
 
         to_run = partial(ytdl.extract_info, url=search, download=download)
         data = await loop.run_in_executor(None, to_run)
