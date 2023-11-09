@@ -31,4 +31,4 @@ jobs:
       env:
         TOKEN: ${{ secrets.TOKEN }}
       run: |
-        timeout 60 python main.py || code=$?; if [[ $code -ne 124 && $code -ne 0 ]]; then exit $code; fi
+        timeout 30 python main.py || code=$?; if [[ $code -ne 124 && $code -ne 0 ]]; then exit $code; fi
