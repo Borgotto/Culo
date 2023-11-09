@@ -12,7 +12,7 @@ class Tasks(commands.Cog, name='tasks'):
     def __init__(self, bot):
         self.bot = bot
         self.nicknames.start()
-        self.oraesatta.start()
+        #self.oraesatta.start() # disable ora esatta for now
 
     #Loop to rename some users
     @tasks.loop(minutes=15)
@@ -34,7 +34,7 @@ class Tasks(commands.Cog, name='tasks'):
                 continue
 
     #Loop to send the "ora esatta" video at 7:15 AM (UTC+1)
-    @tasks.loop(time=datetime.time(hour=5, minute=15))
+    @tasks.loop(time=datetime.time(hour=6, minute=15))
     async def oraesatta(self):
         with open('./config/ora_esatta.json', 'r') as f:
             ora_esatta_config = json.load(f)
