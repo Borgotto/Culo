@@ -4,3 +4,4 @@ cogs/__pycache__/
 config/wotd_settings.json
 config/prefixes.json
 token
+log.txt
