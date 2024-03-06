@@ -1,11 +1,7 @@
 import asyncio
-from async_timeout import timeout
 from functools import partial
 from urllib.parse import urlparse, quote
-try:
-    from yt_dlp import YoutubeDL  # try to import yt-dlp fork
-except ImportError:
-    from youtube_dl import YoutubeDL  # or use legacy youtube-dl
+from yt_dlp import YoutubeDL
 import discord
 from discord.ext import commands
 from discord import app_commands, Interaction, Embed, FFmpegPCMAudio, PCMVolumeTransformer
@@ -120,7 +116,7 @@ class MusicPlayer(commands.Cog):
             self.next.clear()
 
             try:
-                async with timeout(120):
+                async with asyncio.timeout(120):
                     source = await self.queue.get()
             except asyncio.TimeoutError:
                 return self.destroy(self._guild)
