@@ -12,12 +12,13 @@ class Tasks(commands.Cog, name='tasks'):
     def __init__(self, bot):
         self.bot = bot
         self.nicknames.start()
+        self.users_to_rename_file = self.bot.cwd + '/config/users_to_rename.json'
         #self.oraesatta.start() # disable ora esatta for now
 
     #Loop to rename some users
     @tasks.loop(minutes=15)
     async def nicknames(self):
-        with open('./config/users_to_rename.json', 'r') as f:
+        with open(self.users_to_rename_file, 'r') as f:
             users_to_rename = json.load(f)
         extensions = users_to_rename["extensions"]
         users_id = users_to_rename["users_id"]
@@ -36,7 +37,7 @@ class Tasks(commands.Cog, name='tasks'):
     #Loop to send the "ora esatta" video at 7:15 AM (UTC+1)
     @tasks.loop(time=datetime.time(hour=6, minute=15))
     async def oraesatta(self):
-        with open('./config/ora_esatta.json', 'r') as f:
+        with open(self.users_to_rename_file, 'r') as f:
             ora_esatta_config = json.load(f)
             sponsor = random.choice(ora_esatta_config['sponsors'])
             channels_id = ora_esatta_config['channels_id']
