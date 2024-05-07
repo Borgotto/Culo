@@ -3,8 +3,8 @@
 #### Il bot di Discord più inutile del mondo *(o almeno lo era all'inizio dello sviluppo)*.
 #### Nato come scherzo tra amici, è cresciuto e diventato un vero e proprio bot
 [![Python 3.11 ](https://github.com/Borgotto/Culo/actions/workflows/test-python-app.yml/badge.svg)](https://github.com/Borgotto/Culo/actions/workflows/test-python-app.yml)
-![](https://dcbadge.vercel.app/api/shield/593096925947887648?bot=true&style=flat)
-![](https://dcbadge.vercel.app/api/shield/289887222310764545?style=flat)
+![](https://dcbadge.limes.pink/api/shield/593096925947887648?bot=true&style=flat)
+![](https://dcbadge.limes.pink/api/shield/289887222310764545?style=flat)
 
 ### Requisiti:
 - [Python 3.11+](https://www.python.org/downloads/)
